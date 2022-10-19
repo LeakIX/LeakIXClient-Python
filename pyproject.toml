@@ -2,7 +2,7 @@
 name = "leakix"
 version = "0.1.0"
 description = "Client to LeakIX API"
-authors = ["Danny Willems <danny@badaas.be>"]
+authors = ["Danny Willems <danny@leakix.net>"]
 
 [tool.poetry.dependencies]
 python = "^3.7"
