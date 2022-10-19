@@ -25,8 +25,8 @@ def test_get_host_success():
             m.get(url, json=res_json, status_code=200)
             response = client.get_host(ipv4)
             assert response.is_success()
-            assert len(response.json().Services) == 3
-            assert len(response.json().Leaks) == 0
+            assert len(response.json()["services"]) == 3
+            assert response.json()["leaks"] is None
 
 
 def test_get_host_404():
