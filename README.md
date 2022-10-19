@@ -1,10 +1,6 @@
 # LeakIX python client
 
-.. image:: https://img.shields.io/pypi/v/leakix.svg
-    :target: https://pypi.org/project/leakix/
-
-.. image:: https://img.shields.io/pypi/pyversions/leakix.svg
-    :target: https://pypi.org/project/leakix
+[![](https://img.shields.io/pypi/v/leakix.svg)](https://pypi.org/project/leakix/)
 
 Official LeakIX python client
 
