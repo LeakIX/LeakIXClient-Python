@@ -2,6 +2,12 @@
 
 Official LeakIX python client
 
+## Install
+
+```
+pip install leakix
+```
+
 ## Examples
 
 ```python
