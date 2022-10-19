@@ -1,6 +1,8 @@
 # LeakIX python client
 
 [![](https://img.shields.io/pypi/v/leakix.svg)](https://pypi.org/project/leakix/)
+[![](https://img.shields.io/pypi/pyversions/leakix.svg)](https://pypi.org/project/leakix/)
+[![](https://img.shields.io/pypi/l/leakix.svg)](https://pypi.org/project/leakix/)
 
 Official LeakIX python client
 
