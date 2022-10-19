@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "leakix"
-version = "0.1.0"
-description = "Client to LeakIX API"
+version = "0.1.1"
+description = "Official python client for LeakIX (https://leakix.net)"
 authors = ["Danny Willems <danny@leakix.net>"]
 
 [tool.poetry.dependencies]
