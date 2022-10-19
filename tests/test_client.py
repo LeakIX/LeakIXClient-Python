@@ -58,7 +58,7 @@ def test_get_host_404(client):
 
 def test_get_host_429(client, fake_ipv4):
     status_code = 429
-    res_json = {'reason': 'rate-limit', 'status': 'error'}
+    res_json = {"reason": "rate-limit", "status": "error"}
     with requests_mock.Mocker() as m:
         url = "%s/host/%s" % (client.BASE_URL, fake_ipv4)
         m.get(url, json=res_json, status_code=status_code)
