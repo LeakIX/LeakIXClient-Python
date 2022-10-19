@@ -32,3 +32,11 @@ class MustNotQuery(Query):
 class ShouldQuery(Query):
     def serialize(self) -> str:
         return "%s" % self.field.serialize()
+
+
+class RawQuery(AbstractQuery):
+    def __init__(self, raw_q: str):
+        self.raw_q = raw_q
+
+    def serialize(self) -> str:
+        return self.raw_q

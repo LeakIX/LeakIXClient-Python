@@ -1,6 +1,6 @@
 import decouple
 from leakix import Client
-from leakix.query import MustQuery, MustNotQuery
+from leakix.query import MustQuery, MustNotQuery, RawQuery
 from leakix.field import PluginField, CountryField
 from leakix.plugin import Plugin
 
@@ -52,8 +52,22 @@ def example_get_leaks_multiple_filter_plugins_must_not():
     )
 
 
+def example_get_leak_raw_query():
+    raw_query = '+plugin:HttpNTLM +country:"France"'
+    query = RawQuery(raw_query)
+    response = CLIENT.get_leak(queries=[query])
+    assert response.status_code() == 200
+    assert all(
+        (
+            i.geoip.country_name == "France" and i.tags == ["ntlm"]
+            for i in response.json()
+        )
+    )
+
+
 if __name__ == "__main__":
     example_get_host_filter_plugin()
     example_get_service_filter_plugin()
     example_get_leaks_filter_multiple_plugins()
     example_get_leaks_multiple_filter_plugins_must_not()
+    example_get_leak_raw_query()
