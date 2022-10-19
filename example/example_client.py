@@ -29,7 +29,7 @@ def example_get_service_filter_plugin():
 def example_get_leaks_filter_multiple_plugins():
     query_http_ntlm = MustQuery(field=PluginField(Plugin.HttpNTLM))
     query_country = MustQuery(field=CountryField("France"))
-    response = CLIENT.get_service(queries=[query_http_ntlm, query_country])
+    response = CLIENT.get_leak(queries=[query_http_ntlm, query_country])
     assert response.status_code() == 200
     assert all(
         (
@@ -42,7 +42,7 @@ def example_get_leaks_filter_multiple_plugins():
 def example_get_leaks_multiple_filter_plugins_must_not():
     query_http_ntlm = MustQuery(field=PluginField(Plugin.HttpNTLM))
     query_country = MustNotQuery(field=CountryField("France"))
-    response = CLIENT.get_service(queries=[query_http_ntlm, query_country])
+    response = CLIENT.get_leak(queries=[query_http_ntlm, query_country])
     assert response.status_code() == 200
     assert all(
         (
