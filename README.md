@@ -1,9 +1,3 @@
-# LeakIXClient-Python
+# LeakIX python client
 
-Python Client to LeakIX API
-
-
-```
-poetry install
-poetry run python leakix/client.py
-```
+Official LeakIX python client
