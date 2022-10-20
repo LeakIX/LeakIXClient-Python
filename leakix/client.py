@@ -10,6 +10,7 @@ from leakix.response import SuccessResponse, ErrorResponse, RateLimitResponse
 from leakix.query import *
 from leakix.plugin import *
 from leakix.field import *
+from leakix import __VERSION__
 
 
 class Scope(Enum):
@@ -24,13 +25,12 @@ class HostResult(Model):
 
 class Client:
     BASE_URL = "https://leakix.net"
-    VERSION = "0.1.0"
 
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key
         self.headers = {
             "Accept": "application/json",
-            "User-agent": "LeakIX-client-python/%s" % self.VERSION,
+            "User-agent": "leakix-client-python/%s" % __VERSION__,
         }
         if api_key:
             self.headers["api-key"] = api_key
