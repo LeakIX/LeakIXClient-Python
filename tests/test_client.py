@@ -30,7 +30,7 @@ def test_get_host_success(client):
         # remove .json
         ipv4 = f.name[:-5]
         with requests_mock.Mocker() as m:
-            url = "%s/host/%s" % (client.BASE_URL, ipv4)
+            url = "%s/host/%s" % (client.base_url, ipv4)
             m.get(url, json=res_json, status_code=200)
             response = client.get_host(ipv4)
             assert response.is_success()
@@ -47,7 +47,7 @@ def test_get_host_404(client):
         ipv4 = f.name[:-5]
         client = Client()
         with requests_mock.Mocker() as m:
-            url = "%s/host/%s" % (client.BASE_URL, ipv4)
+            url = "%s/host/%s" % (client.base_url, ipv4)
             m.get(url, json=res_json, status_code=404)
             response = client.get_host(ipv4)
             assert response.is_error()
@@ -60,7 +60,7 @@ def test_get_host_429(client, fake_ipv4):
     status_code = 429
     res_json = {"reason": "rate-limit", "status": "error"}
     with requests_mock.Mocker() as m:
-        url = "%s/host/%s" % (client.BASE_URL, fake_ipv4)
+        url = "%s/host/%s" % (client.base_url, fake_ipv4)
         m.get(url, json=res_json, status_code=status_code)
         response = client.get_host(fake_ipv4)
         assert response.is_error()

@@ -6,7 +6,8 @@ from leakix.plugin import Plugin
 
 
 API_KEY = decouple.config("API_KEY")
-CLIENT = Client(api_key=API_KEY)
+BASE_URL = decouple.config("LEAKIX_HOST", default=None)
+CLIENT = Client(api_key=API_KEY, base_url=BASE_URL)
 
 
 def example_get_host_filter_plugin():

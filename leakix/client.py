@@ -25,10 +25,11 @@ class HostResult(Model):
 
 
 class Client:
-    BASE_URL = "https://leakix.net"
-
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(self,
+                 api_key: Optional[str] = None,
+                 base_url: Optional[str] = "https://leakix.net"):
         self.api_key = api_key
+        self.base_url = base_url
         self.headers = {
             "Accept": "application/json",
             "User-agent": "leakix-client-python/%s" % __VERSION__,
@@ -43,7 +44,7 @@ class Client:
             serialized_query = [q.serialize() for q in queries]
             serialized_query = " ".join(serialized_query)
             serialized_query = "%s" % serialized_query
-        url = "%s/search" % self.BASE_URL
+        url = "%s/search" % self.base_url
         r = requests.get(
             url,
             params={"scope": scope.value, "q": serialized_query},
@@ -74,7 +75,7 @@ class Client:
         return r
 
     def get_host(self, ipv4: str):
-        url = "%s/host/%s" % (self.BASE_URL, ipv4)
+        url = "%s/host/%s" % (self.base_url, ipv4)
         r = requests.get(url, headers=self.headers)
         if r.status_code == 200:
             response_json = r.json()
