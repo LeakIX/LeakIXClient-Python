@@ -66,9 +66,17 @@ def example_get_leak_raw_query():
     )
 
 
+def example_get_plugins():
+    response = CLIENT.get_plugins()
+    for p in response.json():
+        print(p.name)
+        print(p.description)
+
+
 if __name__ == "__main__":
     example_get_host_filter_plugin()
     example_get_service_filter_plugin()
     example_get_leaks_filter_multiple_plugins()
     example_get_leaks_multiple_filter_plugins_must_not()
     example_get_leak_raw_query()
+    example_get_plugins()

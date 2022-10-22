@@ -25,9 +25,11 @@ class HostResult(Model):
 
 
 class Client:
-    def __init__(self,
-                 api_key: Optional[str] = None,
-                 base_url: Optional[str] = "https://leakix.net"):
+    def __init__(
+        self,
+        api_key: Optional[str] = None,
+        base_url: Optional[str] = "https://leakix.net",
+    ):
         self.api_key = api_key
         self.base_url = base_url
         self.headers = {
@@ -37,17 +39,10 @@ class Client:
         if api_key:
             self.headers["api-key"] = api_key
 
-    def get(self, scope: Scope, queries: Optional[List[Query]] = None):
-        if queries is None or len(queries) == 0:
-            serialized_query = EmptyQuery().serialize()
-        else:
-            serialized_query = [q.serialize() for q in queries]
-            serialized_query = " ".join(serialized_query)
-            serialized_query = "%s" % serialized_query
-        url = "%s/search" % self.base_url
+    def __get(self, url, params):
         r = requests.get(
             url,
-            params={"scope": scope.value, "q": serialized_query},
+            params=params,
             headers=self.headers,
         )
         if r.status_code == 200:
@@ -56,7 +51,18 @@ class Client:
         elif r.status_code == 429:
             return RateLimitResponse(response=r)
         else:
-            return ErrorResponse(response=r, response_json=response.json())
+            return ErrorResponse(response=r, response_json=r.json())
+
+    def get(self, scope: Scope, queries: Optional[List[Query]] = None):
+        if queries is None or len(queries) == 0:
+            serialized_query = EmptyQuery().serialize()
+        else:
+            serialized_query = [q.serialize() for q in queries]
+            serialized_query = " ".join(serialized_query)
+            serialized_query = "%s" % serialized_query
+        url = "%s/search" % self.base_url
+        r = self.__get(url=url, params={"scope": scope.value, "q": serialized_query})
+        return r
 
     def get_service(self, queries: Optional[List[Query]] = None):
         r = self.get(Scope.SERVICE, queries=queries)
@@ -76,17 +82,20 @@ class Client:
 
     def get_host(self, ipv4: str):
         url = "%s/host/%s" % (self.base_url, ipv4)
-        r = requests.get(url, headers=self.headers)
-        if r.status_code == 200:
+        r = self.__get(url, params=None)
+        if r.is_success():
             response_json = r.json()
             formatted_result = HostResult.from_dict(response_json)
             response_json = {
                 "services": formatted_result.Services,
                 "leaks": formatted_result.Leaks,
             }
-            return SuccessResponse(response=r, response_json=response_json)
-        elif r.status_code == 429:
-            return RateLimitResponse(response=r)
-        else:
-            response_json = r.json()
-            return ErrorResponse(response=r, response_json=response_json)
+            r.response_json = response_json
+        return r
+
+    def get_plugins(self):
+        url = "%s/api/plugins" % (self.base_url)
+        r = self.__get(url, params=None)
+        if r.is_success():
+            r.response_json = [APIResult.from_dict(d) for d in r.json()]
+        return r
