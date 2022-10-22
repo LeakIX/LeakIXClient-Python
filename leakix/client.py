@@ -9,7 +9,9 @@ from leakix.response import SuccessResponse, ErrorResponse, RateLimitResponse
 from leakix.query import *
 from leakix.plugin import *
 from leakix.field import *
-from leakix import __VERSION__
+
+
+__VERSION__ = "0.1.2"
 
 
 class Scope(Enum):
