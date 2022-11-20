@@ -1,4 +1,10 @@
 from enum import Enum
+from serde import Model, fields
+
+
+class APIResult(Model):
+    name: fields.Str()
+    description: fields.Str()
 
 
 class Plugin(Enum):

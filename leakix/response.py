@@ -4,14 +4,10 @@ from abc import ABCMeta, abstractmethod
 class AbstractResponse(metaclass=ABCMeta):
     def __init__(self, response, response_json=None):
         self.response = response
-        self.response_json = response_json
+        self.response_json = response_json or response.json()
 
     def json(self):
-        return (
-            self.response_json
-            if self.response_json is not None
-            else self.response.json()
-        )
+        return self.response_json
 
     def status_code(self):
         return self.response.status_code
