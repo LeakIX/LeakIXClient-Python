@@ -42,6 +42,18 @@ def example_get_service_filter_plugin():
     assert all((i.tags == ["ntlm"] for i in response.json()))
 
 
+def example_get_service_filter_plugin_with_pagination():
+    """
+    Filter by fields. In this example, we want to have the NTLM services.
+    A list of plugins can be found in leakix.plugin
+    """
+    query_http_ntlm = MustQuery(field=PluginField(Plugin.HttpNTLM))
+    response = CLIENT.get_service(queries=[query_http_ntlm], page=1)
+    assert response.status_code() == 200
+    # check we only get NTML related services
+    assert all((i.tags == ["ntlm"] for i in response.json()))
+
+
 def example_get_leaks_filter_multiple_plugins():
     query_http_ntlm = MustQuery(field=PluginField(Plugin.HttpNTLM))
     query_country = MustQuery(field=CountryField("France"))

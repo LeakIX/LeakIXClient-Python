@@ -25,6 +25,8 @@ class HostResult(Model):
 
 
 class Client:
+    MAX_RESULTS_PER_PAGE = 20
+
     def __init__(
         self,
         api_key: Optional[str] = None,
@@ -53,7 +55,9 @@ class Client:
         else:
             return ErrorResponse(response=r, response_json=r.json())
 
-    def get(self, scope: Scope, queries: Optional[List[Query]] = None):
+    def get(self, scope: Scope, queries: Optional[List[Query]] = None, page: int = 0):
+        if page < 0:
+            raise ValueError("Page argument must be a positive integer")
         if queries is None or len(queries) == 0:
             serialized_query = EmptyQuery().serialize()
         else:
@@ -61,19 +65,21 @@ class Client:
             serialized_query = " ".join(serialized_query)
             serialized_query = "%s" % serialized_query
         url = "%s/search" % self.base_url
-        r = self.__get(url=url, params={"scope": scope.value, "q": serialized_query})
+        r = self.__get(
+            url=url, params={"scope": scope.value, "q": serialized_query, "page": page}
+        )
         return r
 
-    def get_service(self, queries: Optional[List[Query]] = None):
-        r = self.get(Scope.SERVICE, queries=queries)
+    def get_service(self, queries: Optional[List[Query]] = None, page: int = 0):
+        r = self.get(Scope.SERVICE, queries=queries, page=page)
         if r.is_success():
             r.response_json = [
                 l9format.L9Event.from_dict(res) for res in r.response_json
             ]
         return r
 
-    def get_leak(self, queries: Optional[List[Query]] = None):
-        r = self.get(Scope.LEAK, queries=queries)
+    def get_leak(self, queries: Optional[List[Query]] = None, page: int = 0):
+        r = self.get(Scope.LEAK, queries=queries, page=page)
         if r.is_success():
             r.response_json = [
                 l9format.L9Event.from_dict(res) for res in r.response_json
