@@ -2,15 +2,20 @@ from abc import ABCMeta, abstractmethod
 
 
 class AbstractResponse(metaclass=ABCMeta):
-    def __init__(self, response, response_json=None):
+    def __init__(self, response, response_json=None, status_code=None):
         self.response = response
-        self.response_json = response_json or response.json()
+        self._status_code = (
+            status_code if status_code is not None else self.response.status_code
+        )
+        self.response_json = (
+            response_json if response_json is not None else response.json()
+        )
 
     def json(self):
         return self.response_json
 
     def status_code(self):
-        return self.response.status_code
+        return self._status_code
 
     @abstractmethod
     def is_success(self):
@@ -42,5 +47,7 @@ class RateLimitResponse(ErrorResponse):
 
 
 class R(AbstractResponse):
-    def __init__(self, response, response_json=None):
-        super(R, self).__init__(response, response_json=response_json)
+    def __init__(self, response, response_json=None, status_code=None):
+        super(R, self).__init__(
+            response, response_json=response_json, status_code=status_code
+        )

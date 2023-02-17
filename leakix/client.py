@@ -52,6 +52,8 @@ class Client:
             return SuccessResponse(response=r, response_json=response_json)
         elif r.status_code == 429:
             return RateLimitResponse(response=r)
+        elif r.status_code == 204:
+            return ErrorResponse(response=r, response_json=[], status_code=200)
         else:
             return ErrorResponse(response=r, response_json=r.json())
 
