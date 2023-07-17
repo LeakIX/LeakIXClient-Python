@@ -8,6 +8,11 @@ class APIResult(Model):
 
 
 class Plugin(Enum):
+    """
+    The list of plugins can be found on https://leakix.net/plugins. Some plugins are only available to paid users. Have
+    a look at https://leakix.net/pricing for a detailled list.
+    """
+
     ApacheStatusHttpPlugin = "ApacheStatusHttpPlugin"
     BitbucketPlugin = "BitbucketPlugin"
     CheckMkPlugin = "CheckMkPlugin"

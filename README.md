@@ -11,6 +11,31 @@ Official LeakIX python client
 pip install leakix
 ```
 
+To run tests, use `poetry run pytest`.
+
+## Documentation
+
+Docstrings are used to document the library.
+Types are also used to inform the user on what type of objects the functions are
+expecting.
+
+The output are events described in
+[l9format](https://github.com/LeakIX/l9format-python).
+When you have an object of type `l9Event` (or the longer
+`l9format.l9format.L9Event`), you can refer to
+[L9Event](https://github.com/LeakIX/l9format-python/blob/main/l9format/l9format.py#L158)
+model class for the available fields.
+
+For instance, to access the IP of an object `event` of type `L9Event`, you can
+use `event.ip`.
+
+## Support
+
+Feel free to open an issue if you have any question.
+You can also contact us on `support@leakix.net`.
+
+If you need commercial support, have a look at https://leakix.net/pricing.
+
 ## Examples
 
 ```python
