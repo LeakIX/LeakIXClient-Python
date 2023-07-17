@@ -74,6 +74,12 @@ class Client:
 
         The output of a query can be accessed using the method `json`, for instance `response.json()`.
         In the case of a successfull response, the output will be a list of L9Event.
+        When you have an object of type `l9Event` (or the longer
+        `l9format.l9format.L9Event`), you can refer to
+        [L9Event](https://github.com/LeakIX/l9format-python/blob/main/l9format/l9format.py#L158)
+        model class for the available fields.
+        For instance, to access the IP of an object `event` of type `L9Event`, you can
+        use `event.ip`.
         """
         if page < 0:
             raise ValueError("Page argument must be a positive integer")
