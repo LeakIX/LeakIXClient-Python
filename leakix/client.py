@@ -143,7 +143,7 @@ class Client:
         which contains a brief description of the plugin.
         Paid users have access to a broader list of plugins. The full list you can be found on
         https://leakix.net/plugins.
-        For the paid plans, have a look at https://leakix.net/pricing.
+        For the paid plans, have a look at https://leakix.net/plans.
         """
         url = "%s/api/plugins" % (self.base_url)
         r = self.__get(url, params=None)

@@ -34,7 +34,7 @@ use `event.ip`.
 Feel free to open an issue if you have any question.
 You can also contact us on `support@leakix.net`.
 
-If you need commercial support, have a look at https://leakix.net/pricing.
+If you need commercial support, have a look at https://leakix.net/plans.
 
 ## Examples
 
