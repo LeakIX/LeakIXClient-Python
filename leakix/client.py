@@ -25,16 +25,17 @@ class HostResult(Model):
     Leaks: fields.Optional(fields.List(fields.Nested(l9format.L9Event)))
 
 
+DEFAULT_URL = "https://leakix.net"
 class Client:
     MAX_RESULTS_PER_PAGE = 20
 
     def __init__(
         self,
         api_key: Optional[str] = None,
-        base_url: Optional[str] = "https://leakix.net",
+        base_url: Optional[str] = DEFAULT_URL,
     ):
         self.api_key = api_key
-        self.base_url = base_url
+        self.base_url = base_url if base_url else DEFAULT_URL
         self.headers = {
             "Accept": "application/json",
             "User-agent": "leakix-client-python/%s" % __VERSION__,
