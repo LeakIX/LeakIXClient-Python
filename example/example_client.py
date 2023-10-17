@@ -23,7 +23,7 @@ def example_get_service_filter_plugin():
     """
     query_http_ntlm = MustQuery(field=PluginField(Plugin.HttpNTLM))
     response = CLIENT.get_service(queries=[query_http_ntlm])
-    assert response.status_code() == 200,response.status_code()
+    assert response.status_code() == 200, response.status_code()
     # check we only get NTML related services
     assert all((i.tags == ["ntlm"] for i in response.json()))
 

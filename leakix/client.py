@@ -26,6 +26,8 @@ class HostResult(Model):
 
 
 DEFAULT_URL = "https://leakix.net"
+
+
 class Client:
     MAX_RESULTS_PER_PAGE = 20
 
