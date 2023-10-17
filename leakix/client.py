@@ -1,5 +1,4 @@
-from abc import ABCMeta, abstractmethod
-import os
+import json
 from typing import Optional, List
 import requests
 from l9format import l9format
@@ -52,7 +51,7 @@ class Client:
             headers=self.headers,
         )
         if r.status_code == 200:
-            response_json = r.json() or []
+            response_json = r.json() if r.content else []
             return SuccessResponse(response=r, response_json=response_json)
         elif r.status_code == 429:
             return RateLimitResponse(response=r)
@@ -152,4 +151,33 @@ class Client:
         r = self.__get(url, params=None)
         if r.is_success():
             r.response_json = [APIResult.from_dict(d) for d in r.json()]
+        return r
+
+    def bulk_export(self, queries: Optional[List[Query]] = None):
+        url = "%s/bulk/search" % (self.base_url)
+        if queries is None or len(queries) == 0:
+            serialized_query = EmptyQuery().serialize()
+        else:
+            serialized_query = [q.serialize() for q in queries]
+            serialized_query = " ".join(serialized_query)
+            serialized_query = "%s" % serialized_query
+        params = {"q": serialized_query}
+        r = requests.get(
+            url,
+            params=params,
+            headers=self.headers,
+            stream=True
+        )
+        if r.status_code == 200:
+            response_json = []
+            for line in r.iter_lines():
+                json_event = json.loads(line)
+                response_json.append(l9format.L9Aggregation.from_dict(json_event))
+            return SuccessResponse(response=r, response_json=response_json)
+        elif r.status_code == 429:
+            return RateLimitResponse(response=r)
+        elif r.status_code == 204:
+            return ErrorResponse(response=r, response_json=[], status_code=200)
+        else:
+            return ErrorResponse(response=r, response_json=r.json())
         return r
