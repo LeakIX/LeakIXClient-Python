@@ -11,7 +11,7 @@ from leakix.plugin import APIResult
 from leakix.field import *
 
 
-__VERSION__ = "0.1.3"
+__VERSION__ = "0.1.8"
 
 
 class Scope(Enum):
