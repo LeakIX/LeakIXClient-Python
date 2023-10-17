@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 
 
 API_KEY = decouple.config("API_KEY")
-BASE_URL = decouple.config("LEAKIX_HOST", default=None)
 CLIENT = Client(api_key=API_KEY)
 
 
