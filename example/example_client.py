@@ -99,6 +99,13 @@ def example_get_plugins():
         print(p.description)
 
 
+def example_bulk_export():
+    raw_query = '+plugin:"SmbPlugin" +country:"Belgium"'
+    query = RawQuery(raw_query)
+    response = CLIENT.bulk_export([query])
+    print(response.json())
+
+
 if __name__ == "__main__":
     example_get_host_filter_plugin()
     example_get_service_filter_plugin()
@@ -108,3 +115,4 @@ if __name__ == "__main__":
     example_get_leak_plugins_with_time()
     example_get_leak_raw_query()
     example_get_plugins()
+    example_bulk_export()
