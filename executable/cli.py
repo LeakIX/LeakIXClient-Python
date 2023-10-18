@@ -42,7 +42,7 @@ class CLI:
         else:
             raise Exception(
                 "API error (code = %d, message = %s)"
-                % (repsonse.status_code, response.json())
+                % (response.status_code, response.json())
             )
 
 
