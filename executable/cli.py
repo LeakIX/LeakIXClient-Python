@@ -24,12 +24,15 @@ class CLI:
         after_dt = datetime.strptime(after, DATETIME_FORMAT)
         client = Client(api_key=API_KEY)
 
-        raw_query = RawQuery(query)
-        before_dt_field = UpdateDateField(before_dt, operator=Operator.StrictlyGreater)
-        after_dt_field = UpdateDateField(after_dt, operator=Operator.StrictlySmaller)
-        before_dt_query = MustQuery(before_dt_field)
-        after_dt_query = MustQuery(after_dt_field)
-        response = client.bulk_export([raw_query, before_dt_query, after_dt_query])
+        queries = []
+        queries.append(RawQuery(query))
+        if before is not None:
+            before_dt_field = UpdateDateField(before_dt, operator=Operator.StrictlyGreater)
+            queries.append(MustQuery(before_dt_field))
+        if after is not None:
+            after_dt_field = UpdateDateField(after_dt, operator=Operator.StrictlySmaller)
+            queries.append(MustQuery(after_dt_field))
+        response = client.bulk_export(queries)
         if response.is_success():
             res = []
             for j in response.json():
