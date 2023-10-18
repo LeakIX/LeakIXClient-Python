@@ -29,7 +29,7 @@ class CustomField:
 
 class TimeField(CustomField):
     def __init__(self, d: datetime, operator: Optional[Operator] = None):
-        v = d.strftime("%Y-%m-%d")
+        v = '"%s"' % d.strftime("%Y-%m-%d")
         super(TimeField, self).__init__(v=v, operator=operator, field_name="time")
 
 
