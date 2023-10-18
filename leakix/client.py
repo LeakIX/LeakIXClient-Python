@@ -162,12 +162,7 @@ class Client:
             serialized_query = " ".join(serialized_query)
             serialized_query = "%s" % serialized_query
         params = {"q": serialized_query}
-        r = requests.get(
-            url,
-            params=params,
-            headers=self.headers,
-            stream=True
-        )
+        r = requests.get(url, params=params, headers=self.headers, stream=True)
         if r.status_code == 200:
             response_json = []
             for line in r.iter_lines():
