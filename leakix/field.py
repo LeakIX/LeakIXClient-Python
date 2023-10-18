@@ -33,6 +33,15 @@ class TimeField(CustomField):
         super(TimeField, self).__init__(v=v, operator=operator, field_name="time")
 
 
+class UpdateDateField(CustomField):
+    def __init__(self, d: datetime, operator: Optional[Operator] = None):
+        # v = '"%s"' % d.strftime("%Y-%m-%d %H:%M:%S")
+        v = '"%s"' % d.strftime("%Y-%m-%d")
+        super(UpdateDateField, self).__init__(
+            v=v, operator=operator, field_name="update_date"
+        )
+
+
 class AgeField(CustomField):
     def __init__(self, age: int, operator: Optional[Operator] = None):
         super(AgeField, self).__init__(v=str(age), operator=operator, field_name="age")
