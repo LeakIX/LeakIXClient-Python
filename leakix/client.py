@@ -176,3 +176,27 @@ class Client:
         else:
             return ErrorResponse(response=r, response_json=r.json())
         return r
+
+    def bulk_service(self, queries: Optional[List[Query]] = None):
+        url = "%s/bulk/service" % (self.base_url)
+        if queries is None or len(queries) == 0:
+            serialized_query = EmptyQuery().serialize()
+        else:
+            serialized_query = [q.serialize() for q in queries]
+            serialized_query = " ".join(serialized_query)
+            serialized_query = "%s" % serialized_query
+        params = {"q": serialized_query}
+        r = requests.get(url, params=params, headers=self.headers, stream=True)
+        if r.status_code == 200:
+            response_json = []
+            for line in r.iter_lines():
+                json_event = json.loads(line)
+                response_json.append(l9format.L9Event.from_dict(json_event))
+            return SuccessResponse(response=r, response_json=response_json)
+        elif r.status_code == 429:
+            return RateLimitResponse(response=r)
+        elif r.status_code == 204:
+            return ErrorResponse(response=r, response_json=[], status_code=200)
+        else:
+            return ErrorResponse(response=r, response_json=r.json())
+        return r
