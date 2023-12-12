@@ -177,6 +177,19 @@ class Client:
             return ErrorResponse(response=r, response_json=r.json())
         return r
 
+    def bulk_export_last_event(self, queries: Optional[List[Query]] = None):
+        response = self.bulk_export(queries)
+        if response.is_success():
+            for aggreg in response.json():
+                events = aggreg.events
+                sorted_events = sorted(
+                    events,
+                    key=lambda event: event.time,
+                    reverse=True,
+                )
+                aggreg.events = [sorted_events[0]]
+        return response
+
     def bulk_service(self, queries: Optional[List[Query]] = None):
         url = "%s/bulk/service" % (self.base_url)
         if queries is None or len(queries) == 0:
