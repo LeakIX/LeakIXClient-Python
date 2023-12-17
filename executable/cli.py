@@ -27,10 +27,14 @@ class CLI:
         queries = []
         queries.append(RawQuery(query))
         if before is not None:
-            before_dt_field = UpdateDateField(before_dt, operator=Operator.StrictlyGreater)
+            before_dt_field = UpdateDateField(
+                before_dt, operator=Operator.StrictlyGreater
+            )
             queries.append(MustQuery(before_dt_field))
         if after is not None:
-            after_dt_field = UpdateDateField(after_dt, operator=Operator.StrictlySmaller)
+            after_dt_field = UpdateDateField(
+                after_dt, operator=Operator.StrictlySmaller
+            )
             queries.append(MustQuery(after_dt_field))
         response = client.bulk_export(queries)
         if response.is_success():

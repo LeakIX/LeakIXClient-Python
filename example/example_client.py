@@ -107,7 +107,7 @@ def example_bulk_export():
 
 
 def example_bulk_service():
-    raw_query = '+"window.onload=function(){ url =\'/webui\';window.location.href=url;}" +port:443'
+    raw_query = "+\"window.onload=function(){ url ='/webui';window.location.href=url;}\" +port:443"
     query = RawQuery(raw_query)
     response = CLIENT.bulk_service([query])
     print(response.json())
