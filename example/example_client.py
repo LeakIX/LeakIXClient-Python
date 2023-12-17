@@ -106,6 +106,13 @@ def example_bulk_export():
     print(response.json())
 
 
+def example_bulk_export_last_event():
+    raw_query = '+plugin:"SmbPlugin" +country:"Belgium"'
+    query = RawQuery(raw_query)
+    response = CLIENT.bulk_export_last_event([query])
+    print(response.json())
+
+
 def example_bulk_service():
     raw_query = "+\"window.onload=function(){ url ='/webui';window.location.href=url;}\" +port:443"
     query = RawQuery(raw_query)
@@ -124,3 +131,4 @@ if __name__ == "__main__":
     example_get_plugins()
     example_bulk_export()
     example_bulk_service()
+    example_bulk_export_last_event()
