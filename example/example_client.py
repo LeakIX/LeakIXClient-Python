@@ -120,6 +120,12 @@ def example_bulk_service():
     print(response.json())
 
 
+def example_get_subdomains():
+    domain = "leakix.net"
+    response = CLIENT.get_subdomains(domain)
+    print(response.json())
+
+
 if __name__ == "__main__":
     example_get_host_filter_plugin()
     example_get_service_filter_plugin()
@@ -132,3 +138,4 @@ if __name__ == "__main__":
     example_bulk_export()
     example_bulk_service()
     example_bulk_export_last_event()
+    example_get_subdomain()

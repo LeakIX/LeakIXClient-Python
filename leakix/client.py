@@ -9,6 +9,7 @@ from leakix.query import *
 from leakix.plugin import *
 from leakix.plugin import APIResult
 from leakix.field import *
+from leakix.domain import L9Subdomain
 
 
 __VERSION__ = "0.1.9"
@@ -151,6 +152,18 @@ class Client:
         r = self.__get(url, params=None)
         if r.is_success():
             r.response_json = [APIResult.from_dict(d) for d in r.json()]
+        return r
+
+    def get_subdomains(self, domain: str):
+        """
+        Returns the list of subdomains for a given domain.
+        The output is a list of `L9Subdomain` objects. The fields are `subdomain`, `distinct_ips` and `last_seen`.
+        To get back a JSON/Python dictionary, use the method `to_dict` on the individual element of the response object.
+        """
+        url = "%s/api/subdomains/%s" % (self.base_url, domain)
+        r = self.__get(url, params=None)
+        if r.is_success():
+            r.response_json = [L9Subdomain.from_dict(d) for d in r.json()]
         return r
 
     def bulk_export(self, queries: Optional[List[Query]] = None):
