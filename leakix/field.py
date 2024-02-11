@@ -1,5 +1,4 @@
 from leakix.plugin import Plugin
-from abc import ABCMeta, abstractmethod
 from datetime import datetime
 from typing import Optional
 from enum import Enum
