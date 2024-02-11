@@ -19,6 +19,11 @@ Docstrings are used to document the library.
 Types are also used to inform the user on what type of objects the functions are
 expecting.
 
+Each API response is encoded in either a `SuccessResponse` object or a
+`ErrorResponse`.
+The methods `is_success()` or `is_error()` exist on each API response.
+You can get the actual response by using the method `json()` on the response object.
+
 The output are events described in
 [l9format](https://github.com/LeakIX/l9format-python).
 When you have an object of type `l9Event` (or the longer
@@ -28,6 +33,16 @@ model class for the available fields.
 
 For instance, to access the IP of an object `event` of type `L9Event`, you can
 use `event.ip`.
+
+Each object can be transformed back into a Python dictionary/JSON using the method `to_dict()`.
+For instance, for the response of the subdomains endpoint, you can get back individual JSON by using:
+
+```python
+def example_get_subdomains():
+    response = CLIENT.get_subdomains("leakix.net")
+    for subdomain in response.json():
+        print(subdomain.to_dict())
+```
 
 ## Support
 
