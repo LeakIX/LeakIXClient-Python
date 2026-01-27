@@ -3,7 +3,7 @@
 
 version: 2
 updates:
-  # Maintain dependencies for pip (Python/Poetry)
+  # Maintain dependencies for Python (pip ecosystem handles pyproject.toml)
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
