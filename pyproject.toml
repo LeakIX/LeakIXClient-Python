@@ -17,6 +17,7 @@ black = "*"
 mypy = "*"
 requests-mock = "*"
 pylint = "*"
+pip-audit = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

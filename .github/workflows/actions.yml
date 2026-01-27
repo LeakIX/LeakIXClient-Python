@@ -25,3 +25,6 @@ jobs:
         run: poetry run pytest tests
       - name: Run black
         run: poetry run black leakix/*.py tests/*.py example/*.py --check
+      - name: Security audit
+        if: matrix.python-version != '3.7'
+        run: poetry run pip-audit
