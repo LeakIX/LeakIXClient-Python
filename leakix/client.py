@@ -11,7 +11,6 @@ from leakix.plugin import APIResult
 from leakix.field import *
 from leakix.domain import L9Subdomain
 
-
 __VERSION__ = "0.1.9"
 
 
