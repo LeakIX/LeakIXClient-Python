@@ -5,7 +5,6 @@ from leakix.field import PluginField, CountryField, TimeField, Operator
 from leakix.plugin import Plugin
 from datetime import datetime, timedelta
 
-
 API_KEY = decouple.config("API_KEY")
 CLIENT = Client(api_key=API_KEY)
 
