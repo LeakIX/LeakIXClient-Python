@@ -36,9 +36,7 @@ class UpdateDateField(CustomField):
     def __init__(self, d: datetime, operator: Operator | None = None):
         # v = '"%s"' % d.strftime("%Y-%m-%d %H:%M:%S")
         v = '"{}"'.format(d.strftime("%Y-%m-%d"))
-        super().__init__(
-            v=v, operator=operator, field_name="update_date"
-        )
+        super().__init__(v=v, operator=operator, field_name="update_date")
 
 
 class AgeField(CustomField):
@@ -60,13 +58,9 @@ class IPField(CustomField):
 class PortField(CustomField):
     def __init__(self, port: int, operator: Operator | None = None):
         assert 0 <= port < 65536
-        super().__init__(
-            v=str(port), operator=operator, field_name="port"
-        )
+        super().__init__(v=str(port), operator=operator, field_name="port")
 
 
 class CountryField(CustomField):
     def __init__(self, country: str):
-        super().__init__(
-            v=country, operator=None, field_name="country"
-        )
+        super().__init__(v=country, operator=None, field_name="country")
