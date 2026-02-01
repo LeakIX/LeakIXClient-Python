@@ -13,11 +13,37 @@ fire = ">=0.5,<0.8"
 [tool.poetry.group.dev.dependencies]
 python-decouple = "*"
 pytest = "*"
-black = "*"
+pytest-cov = "*"
 mypy = "*"
 requests-mock = "*"
-pylint = "*"
+ruff = "*"
 pip-audit = "*"
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.lint.per-file-ignores]
+# Allow percent formatting in example/executable (existing code style)
+"example/*.py" = ["UP031"]
+"executable/*.py" = ["UP031"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.mypy]
+python_version = "3.13"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
