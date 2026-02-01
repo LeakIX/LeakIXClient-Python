@@ -60,31 +60,29 @@ clean: ## Clean build artifacts
 	find . -type f -name "*.pyc" -delete 2>/dev/null || true
 
 # Trailing whitespace targets
-UNAME_S := $(shell uname -s)
-ifeq ($(UNAME_S),Darwin)
-    SED := $(shell command -v gsed 2>/dev/null)
-    ifeq ($(SED),)
-        $(error GNU sed (gsed) not found on macOS. \
-			Install with: brew install gnu-sed)
-    endif
-else
-    SED := sed
-endif
-
+# Note: fix-trailing-whitespace requires GNU sed (gsed) on macOS
 .PHONY: fix-trailing-whitespace
 fix-trailing-whitespace: ## Remove trailing whitespaces from all files
-	@echo "Removing trailing whitespaces from all files..."
-	@find . -type f \( \
+	@if [ "$$(uname -s)" = "Darwin" ]; then \
+		SED=$$(command -v gsed 2>/dev/null); \
+		if [ -z "$$SED" ]; then \
+			echo "Error: GNU sed (gsed) not found on macOS."; \
+			echo "Install with: brew install gnu-sed"; \
+			exit 1; \
+		fi; \
+	else \
+		SED=sed; \
+	fi; \
+	echo "Removing trailing whitespaces from all files..."; \
+	find . -type f \( \
 		-name "*.py" -o -name "*.toml" -o -name "*.md" -o -name "*.yaml" \
 		-o -name "*.yml" -o -name "*.json" \) \
 		-not -path "./.git/*" \
 		-not -path "./.mypy_cache/*" \
 		-not -path "./.pytest_cache/*" \
 		-not -path "./.ruff_cache/*" \
-		-exec sh -c \
-			'$(SED) -i -e "s/[[:space:]]*$$//" "$$1"' \
-			_ {} \; && \
-		echo "Trailing whitespaces removed."
+		-exec sh -c "$$SED -i -e 's/[[:space:]]*$$//' \"\$$1\"" _ {} \; && \
+	echo "Trailing whitespaces removed."
 
 .PHONY: check-trailing-whitespace
 check-trailing-whitespace: ## Check for trailing whitespaces in source files
