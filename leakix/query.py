@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from typing import Optional, List
+
 from leakix.field import CustomField
 
 
@@ -40,7 +40,7 @@ class MustQuery(Query):
     """
 
     def serialize(self) -> str:
-        return "+%s" % self.field.serialize()
+        return f"+{self.field.serialize()}"
 
 
 class MustNotQuery(Query):
@@ -50,7 +50,7 @@ class MustNotQuery(Query):
     """
 
     def serialize(self) -> str:
-        return "-%s" % self.field.serialize()
+        return f"-{self.field.serialize()}"
 
 
 class ShouldQuery(Query):
@@ -61,7 +61,7 @@ class ShouldQuery(Query):
     """
 
     def serialize(self) -> str:
-        return "%s" % self.field.serialize()
+        return f"{self.field.serialize()}"
 
 
 class RawQuery(AbstractQuery):
