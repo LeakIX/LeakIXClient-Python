@@ -1,9 +1,11 @@
-import decouple
-from leakix import Client
-from leakix.query import MustQuery, MustNotQuery, RawQuery
-from leakix.field import PluginField, CountryField, TimeField, Operator
-from leakix.plugin import Plugin
 from datetime import datetime, timedelta
+
+import decouple
+
+from leakix import Client
+from leakix.field import CountryField, Operator, PluginField, TimeField
+from leakix.plugin import Plugin
+from leakix.query import MustNotQuery, MustQuery, RawQuery
 
 API_KEY = decouple.config("API_KEY")
 CLIENT = Client(api_key=API_KEY)
@@ -23,7 +25,7 @@ def example_get_service_filter_plugin():
     response = CLIENT.get_service(queries=[query_http_ntlm])
     assert response.status_code() == 200, response.status_code()
     # check we only get NTML related services
-    assert all((i.tags == ["ntlm"] for i in response.json()))
+    assert all(i.tags == ["ntlm"] for i in response.json())
 
 
 def example_get_service_filter_plugin_with_pagination():
@@ -36,7 +38,7 @@ def example_get_service_filter_plugin_with_pagination():
     response = CLIENT.get_service(queries=[query_http_ntlm], page=1)
     assert response.status_code() == 200
     # check we only get NTML related services
-    assert all((i.tags == ["ntlm"] for i in response.json()))
+    assert all(i.tags == ["ntlm"] for i in response.json())
 
 
 def example_get_leaks_filter_multiple_plugins():
@@ -45,10 +47,10 @@ def example_get_leaks_filter_multiple_plugins():
     response = CLIENT.get_leak(queries=[query_http_ntlm, query_country])
     assert response.status_code() == 200, response.status_code()
     assert all(
-        (
+
             i.geoip.country_name == "France" and i.tags == ["ntlm"]
             for i in response.json()
-        )
+
     )
 
 
@@ -58,10 +60,10 @@ def example_get_leaks_multiple_filter_plugins_must_not():
     response = CLIENT.get_leak(queries=[query_http_ntlm, query_country])
     assert response.status_code() == 200, response.status_code()
     assert all(
-        (
+
             i.geoip.country_name != "France" and i.tags == ["ntlm"]
             for i in response.json()
-        )
+
     )
 
 
@@ -71,10 +73,10 @@ def example_get_leak_raw_query():
     response = CLIENT.get_leak(queries=[query])
     assert response.status_code() == 200, response.status_code()
     assert all(
-        (
+
             i.geoip.country_name == "France" and i.tags == ["ntlm"]
             for i in response.json()
-        )
+
     )
 
 
@@ -137,4 +139,4 @@ if __name__ == "__main__":
     example_bulk_export()
     example_bulk_service()
     example_bulk_export_last_event()
-    example_get_subdomain()
+    example_get_subdomains()
