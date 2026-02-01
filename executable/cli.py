@@ -1,12 +1,12 @@
-from leakix import Client
 import json
-from leakix.query import RawQuery, MustQuery
-import fire
-from decouple import config
-from leakix.field import TimeField, Operator, PluginField, UpdateDateField
-from typing import Optional
 from datetime import datetime
 
+import fire
+from decouple import config
+
+from leakix import Client
+from leakix.field import Operator, UpdateDateField
+from leakix.query import MustQuery, RawQuery
 
 API_KEY = config("API_KEY")
 DATETIME_FORMAT = "%Y-%m-%d"
@@ -17,8 +17,8 @@ class CLI:
         self,
         query: str,
         filename: str,
-        before: Optional[str] = None,
-        after: Optional[str] = None,
+        before: str | None = None,
+        after: str | None = None,
     ):
         before_dt = datetime.strptime(before, DATETIME_FORMAT)
         after_dt = datetime.strptime(after, DATETIME_FORMAT)
