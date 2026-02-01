@@ -48,6 +48,4 @@ class RateLimitResponse(ErrorResponse):
 
 class R(AbstractResponse):
     def __init__(self, response, response_json=None, status_code=None):
-        super().__init__(
-            response, response_json=response_json, status_code=status_code
-        )
+        super().__init__(response, response_json=response_json, status_code=status_code)
