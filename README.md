@@ -29,6 +29,32 @@ for event in results.json():
 results = client.search("+country:FR +port:22", scope="service")
 ```
 
+## Async Client
+
+For async applications, use `AsyncClient`:
+
+```python
+import asyncio
+from leakix import AsyncClient
+
+async def main():
+    async with AsyncClient(api_key="your-api-key") as client:
+        # Simple search
+        results = await client.search("+plugin:GitConfigHttpPlugin", scope="leak")
+        for event in results:
+            print(event.ip, event.host)
+
+        # Host lookup
+        host = await client.get_host("8.8.8.8")
+        print(host["services"])
+
+        # Streaming bulk export
+        async for aggregation in client.bulk_export_stream(queries):
+            print(aggregation.events[0].ip)
+
+asyncio.run(main())
+```
+
 ## Documentation
 
 Docstrings are used to document the library.
