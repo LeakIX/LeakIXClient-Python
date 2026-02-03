@@ -212,15 +212,6 @@ def example_bulk_stream():
             print(event.ip)
 
 
-def example_bulk_service_stream():
-    """
-    Streaming bulk service - memory efficient for large datasets.
-    """
-    query = MustQuery(field=PluginField(Plugin.GitConfigHttpPlugin))
-    for event in CLIENT.bulk_service_stream(queries=[query]):
-        print(event.ip)
-
-
 if __name__ == "__main__":
     example_get_host_filter_plugin()
     example_get_service_filter_plugin()
@@ -234,5 +225,4 @@ if __name__ == "__main__":
     example_search_service()
     example_get_domain()
     example_bulk_stream()
-    example_bulk_service_stream()
 ```
