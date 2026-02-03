@@ -288,10 +288,5 @@ class Client:
         if r.status_code != 200:
             return
         for line in r.iter_lines():
-            if not line:
-                continue
-            try:
-                json_event = json.loads(line)
-                yield l9format.L9Aggregation.from_dict(json_event)
-            except Exception:
-                pass
+            json_event = json.loads(line)
+            yield l9format.L9Aggregation.from_dict(json_event)
