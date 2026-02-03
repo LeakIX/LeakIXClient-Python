@@ -42,6 +42,7 @@ class Client:
         }
         if api_key:
             self.headers["api-key"] = api_key
+        self._api_status: dict | None = None  # Cached API status
 
     def __get(self, url, params):
         r = requests.get(
@@ -290,3 +291,59 @@ class Client:
         for line in r.iter_lines():
             json_event = json.loads(line)
             yield l9format.L9Aggregation.from_dict(json_event)
+
+    def get_api_status(self, force: bool = False) -> dict:
+        """
+        Check API status and detect Pro subscription.
+
+        Results are cached per client instance. Use force=True to refresh.
+
+        Args:
+            force: Force refresh of cached status.
+
+        Returns:
+            Dict with authenticated, is_pro, features, and plugins_count.
+        """
+        if self._api_status is not None and not force:
+            return self._api_status
+
+        status: dict = {
+            "authenticated": bool(self.api_key),
+            "is_pro": False,
+            "features": [
+                "search",
+                "host_lookup",
+                "domain_lookup",
+                "subdomains",
+            ],
+            "plugins_count": 0,
+        }
+
+        if not self.api_key:
+            self._api_status = status
+            return status
+
+        # Test Pro by querying a Pro-only plugin (WpUserEnumHttp)
+        try:
+            result = self.search("+plugin:WpUserEnumHttp", scope="leak", page=0)
+            if result.is_success() and len(result.json()) > 0:
+                status["is_pro"] = True
+                status["features"].extend(["bulk_export", "pro_plugins"])
+        except Exception:
+            pass
+
+        # Get available plugins count
+        try:
+            plugins_response = self.get_plugins()
+            if plugins_response.is_success():
+                status["plugins_count"] = len(plugins_response.json())
+        except Exception:
+            pass
+
+        self._api_status = status
+        return status
+
+    def is_pro(self) -> bool:
+        """Check if the API key has Pro access. Result is cached."""
+        status = self.get_api_status()
+        return status.get("is_pro", False)

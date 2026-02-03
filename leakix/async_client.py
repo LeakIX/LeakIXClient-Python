@@ -38,6 +38,7 @@ class AsyncClient:
         if api_key:
             self.headers["api-key"] = api_key
         self._client: httpx.AsyncClient | None = None
+        self._api_status: dict | None = None  # Cached API status
 
     async def _get_client(self) -> httpx.AsyncClient:
         """Get or create the HTTP client."""
@@ -239,6 +240,61 @@ class AsyncClient:
         if status == 200 and isinstance(data, list):
             return [APIResult.from_dict(d) for d in data]
         return []
+
+    async def get_api_status(self, force: bool = False) -> dict:
+        """
+        Check API status and detect Pro subscription.
+
+        Results are cached per client instance. Use force=True to refresh.
+
+        Args:
+            force: Force refresh of cached status.
+
+        Returns:
+            Dict with authenticated, is_pro, features, and plugins_count.
+        """
+        if self._api_status is not None and not force:
+            return self._api_status
+
+        status: dict = {
+            "authenticated": bool(self.api_key),
+            "is_pro": False,
+            "features": [
+                "search",
+                "host_lookup",
+                "domain_lookup",
+                "subdomains",
+            ],
+            "plugins_count": 0,
+        }
+
+        if not self.api_key:
+            self._api_status = status
+            return status
+
+        # Test Pro by querying a Pro-only plugin (WpUserEnumHttp)
+        try:
+            result = await self.search("+plugin:WpUserEnumHttp", scope="leak", page=0)
+            if result and len(result) > 0:
+                status["is_pro"] = True
+                status["features"].extend(["bulk_export", "pro_plugins"])
+        except Exception:
+            pass
+
+        # Get available plugins count
+        try:
+            plugins = await self.get_plugins()
+            status["plugins_count"] = len(plugins)
+        except Exception:
+            pass
+
+        self._api_status = status
+        return status
+
+    async def is_pro(self) -> bool:
+        """Check if the API key has Pro access. Result is cached."""
+        status = await self.get_api_status()
+        return status.get("is_pro", False)
 
     async def bulk_export(
         self,
