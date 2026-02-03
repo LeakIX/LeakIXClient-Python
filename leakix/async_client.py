@@ -243,7 +243,7 @@ class AsyncClient:
 
     async def get_api_status(self, force: bool = False) -> dict:
         """
-        Check API status and detect Pro subscription.
+        Check API status and subscription info via /api/user/info endpoint.
 
         Results are cached per client instance. Use force=True to refresh.
 
@@ -251,45 +251,41 @@ class AsyncClient:
             force: Force refresh of cached status.
 
         Returns:
-            Dict with authenticated, is_pro, features, and plugins_count.
+            Dict with username, email, level, is_pro, quota, features, created.
         """
         if self._api_status is not None and not force:
             return self._api_status
 
-        status: dict = {
-            "authenticated": bool(self.api_key),
-            "is_pro": False,
-            "features": [
-                "search",
-                "host_lookup",
-                "domain_lookup",
-                "subdomains",
-            ],
-            "plugins_count": 0,
-        }
-
         if not self.api_key:
-            self._api_status = status
-            return status
+            self._api_status = {
+                "authenticated": False,
+                "is_pro": False,
+                "features": [],
+                "quota": {"total": 0, "remaining": 0, "used": 0},
+            }
+            return self._api_status
 
-        # Test Pro by querying a Pro-only plugin (WpUserEnumHttp)
-        try:
-            result = await self.search("+plugin:WpUserEnumHttp", scope="leak", page=0)
-            if result and len(result) > 0:
-                status["is_pro"] = True
-                status["features"].extend(["bulk_export", "pro_plugins"])
-        except Exception:
-            pass
+        status_code, data = await self._get("/api/user/info")
+        if status_code == 200 and isinstance(data, dict):
+            self._api_status = {
+                "authenticated": True,
+                "username": data.get("username"),
+                "email": data.get("email"),
+                "level": data.get("level"),
+                "is_pro": data.get("is_pro", False),
+                "quota": data.get("quota", {}),
+                "features": data.get("features", []),
+                "created": data.get("created"),
+            }
+        else:
+            self._api_status = {
+                "authenticated": False,
+                "is_pro": False,
+                "features": [],
+                "quota": {"total": 0, "remaining": 0, "used": 0},
+            }
 
-        # Get available plugins count
-        try:
-            plugins = await self.get_plugins()
-            status["plugins_count"] = len(plugins)
-        except Exception:
-            pass
-
-        self._api_status = status
-        return status
+        return self._api_status
 
     async def is_pro(self) -> bool:
         """Check if the API key has Pro access. Result is cached."""
