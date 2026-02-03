@@ -7,10 +7,10 @@ from serde import Model, fields
 
 from leakix.domain import L9Subdomain
 from leakix.plugin import APIResult
-from leakix.query import EmptyQuery, Query
+from leakix.query import EmptyQuery, Query, RawQuery
 from leakix.response import ErrorResponse, RateLimitResponse, SuccessResponse
 
-__VERSION__ = "0.1.9"
+__VERSION__ = "0.2.0"
 
 
 class Scope(Enum):
@@ -224,3 +224,43 @@ class Client:
         else:
             return ErrorResponse(response=r, response_json=r.json())
         return r
+
+    def get_domain(self, domain: str):
+        """
+        Returns the list of services and associated leaks for a given domain.
+        """
+        url = f"{self.base_url}/domain/{domain}"
+        r = self.__get(url, params=None)
+        if r.is_success():
+            response_json = r.json()
+            formatted_result = HostResult.from_dict(response_json)
+            response_json = {
+                "services": formatted_result.Services,
+                "leaks": formatted_result.Leaks,
+            }
+            r.response_json = response_json
+        return r
+
+    def search(self, query: str, scope: str = "leak", page: int = 0):
+        """
+        Simple search using a query string.
+
+        This is a convenience method that accepts a raw query string like on the website.
+        For example: "+plugin:GitConfigHttpPlugin +country:FR"
+
+        Args:
+            query: The search query string (same syntax as the website)
+            scope: Either "leak" or "service" (default: "leak")
+            page: Page number for pagination (default: 0)
+
+        Returns:
+            A response object with the search results.
+
+        Example:
+            >>> client.search("+plugin:GitConfigHttpPlugin", scope="leak")
+            >>> client.search("+country:FR +port:22", scope="service")
+        """
+        queries = [RawQuery(query)]
+        if scope == "service":
+            return self.get_service(queries=queries, page=page)
+        return self.get_leak(queries=queries, page=page)

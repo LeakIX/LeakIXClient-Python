@@ -1,8 +1,11 @@
 [tool.poetry]
 name = "leakix"
-version = "0.1.10"
+version = "0.2.0"
 description = "Official python client for LeakIX (https://leakix.net)"
-authors = ["Danny Willems <danny@leakix.net>"]
+authors = [
+    "Danny Willems <danny@leakix.net>",
+    "Valentin Lobstein <valentin@leakix.net>",
+]
 
 [tool.poetry.dependencies]
 python = "^3.13"
