@@ -264,3 +264,65 @@ class Client:
         if scope == "service":
             return self.get_service(queries=queries, page=page)
         return self.get_leak(queries=queries, page=page)
+
+    def bulk_export_stream(self, queries: list[Query] | None = None):
+        """
+        Streaming version of bulk_export. Yields L9Aggregation objects one by one.
+
+        This is more memory efficient for large result sets as it doesn't load
+        all results into memory at once.
+
+        Example:
+            >>> for aggregation in client.bulk_export_stream([MustQuery(PluginField(Plugin.GitConfigHttpPlugin))]):
+            ...     print(aggregation.events[0].ip)
+        """
+        url = f"{self.base_url}/bulk/search"
+        if queries is None or len(queries) == 0:
+            serialized_query = EmptyQuery().serialize()
+        else:
+            serialized_query = [q.serialize() for q in queries]
+            serialized_query = " ".join(serialized_query)
+            serialized_query = f"{serialized_query}"
+        params = {"q": serialized_query}
+        r = requests.get(url, params=params, headers=self.headers, stream=True)
+        if r.status_code != 200:
+            return
+        for line in r.iter_lines():
+            if not line:
+                continue
+            try:
+                json_event = json.loads(line)
+                yield l9format.L9Aggregation.from_dict(json_event)
+            except Exception:
+                pass
+
+    def bulk_service_stream(self, queries: list[Query] | None = None):
+        """
+        Streaming version of bulk_service. Yields L9Event objects one by one.
+
+        This is more memory efficient for large result sets as it doesn't load
+        all results into memory at once.
+
+        Example:
+            >>> for event in client.bulk_service_stream([MustQuery(PluginField(Plugin.GitConfigHttpPlugin))]):
+            ...     print(event.ip)
+        """
+        url = f"{self.base_url}/bulk/service"
+        if queries is None or len(queries) == 0:
+            serialized_query = EmptyQuery().serialize()
+        else:
+            serialized_query = [q.serialize() for q in queries]
+            serialized_query = " ".join(serialized_query)
+            serialized_query = f"{serialized_query}"
+        params = {"q": serialized_query}
+        r = requests.get(url, params=params, headers=self.headers, stream=True)
+        if r.status_code != 200:
+            return
+        for line in r.iter_lines():
+            if not line:
+                continue
+            try:
+                json_event = json.loads(line)
+                yield l9format.L9Event.from_dict(json_event)
+            except Exception:
+                pass
