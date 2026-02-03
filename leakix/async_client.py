@@ -1,5 +1,6 @@
 """Async LeakIX API client using httpx."""
 
+import asyncio
 import json
 from typing import AsyncIterator
 
@@ -64,17 +65,31 @@ class AsyncClient:
         self,
         path: str,
         params: dict | None = None,
+        max_retries: int = 3,
     ) -> tuple[int, dict | list | None]:
-        """Make a GET request and return status code and JSON response."""
+        """Make a GET request and return status code and JSON response.
+
+        Automatically retries on rate limit (429) with exponential backoff.
+        """
         client = await self._get_client()
-        response = await client.get(path, params=params)
-        if response.status_code == 204:
-            return response.status_code, []
-        if response.status_code == 200:
-            return response.status_code, response.json() if response.content else []
-        if response.status_code == 429:
-            return response.status_code, None
-        return response.status_code, response.json()
+        retries = 0
+        delay = 1.0
+
+        while True:
+            response = await client.get(path, params=params)
+
+            if response.status_code == 204:
+                return response.status_code, []
+            if response.status_code == 200:
+                return response.status_code, response.json() if response.content else []
+            if response.status_code == 429:
+                if retries >= max_retries:
+                    return response.status_code, None
+                retries += 1
+                await asyncio.sleep(delay)
+                delay *= 2
+                continue
+            return response.status_code, response.json()
 
     async def get(
         self,
@@ -163,10 +178,20 @@ class AsyncClient:
             services = data.get("Services") or []
             leaks = data.get("Leaks") or []
             return {
-                "services": [l9format.L9Event.from_dict(s) for s in services],
-                "leaks": [l9format.L9Event.from_dict(l) for l in leaks],
+                "services": self._parse_events(services),
+                "leaks": self._parse_events(leaks),
             }
         return {"services": [], "leaks": []}
+
+    def _parse_events(self, items: list) -> list:
+        """Parse events, falling back to raw dicts if l9format fails."""
+        results = []
+        for item in items:
+            try:
+                results.append(l9format.L9Event.from_dict(item))
+            except Exception:
+                results.append(item)
+        return results
 
     async def get_domain(self, domain: str) -> dict:
         """
@@ -183,8 +208,8 @@ class AsyncClient:
             services = data.get("Services") or []
             leaks = data.get("Leaks") or []
             return {
-                "services": [l9format.L9Event.from_dict(s) for s in services],
-                "leaks": [l9format.L9Event.from_dict(l) for l in leaks],
+                "services": self._parse_events(services),
+                "leaks": self._parse_events(leaks),
             }
         return {"services": [], "leaks": []}
 
