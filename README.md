@@ -13,6 +13,22 @@ pip install leakix
 
 To run tests, use `poetry run pytest`.
 
+## Quick Start
+
+```python
+from leakix import Client
+
+client = Client(api_key="your-api-key")
+
+# Simple search - same syntax as the website
+results = client.search("+plugin:GitConfigHttpPlugin", scope="leak")
+for event in results.json():
+    print(event.ip, event.host)
+
+# Search services
+results = client.search("+country:FR +port:22", scope="service")
+```
+
 ## Documentation
 
 Docstrings are used to document the library.
@@ -156,6 +172,55 @@ def example_get_plugins():
         print(p.description)
 
 
+def example_search_simple():
+    """
+    Simple search using query string syntax (same as the website).
+    No need to build Query objects manually.
+    """
+    response = CLIENT.search("+plugin:GitConfigHttpPlugin", scope="leak")
+    for event in response.json():
+        print(event.ip)
+
+
+def example_search_service():
+    """
+    Search for services with multiple filters.
+    """
+    response = CLIENT.search("+country:FR +port:22", scope="service")
+    for event in response.json():
+        print(event.ip, event.port)
+
+
+def example_get_domain():
+    """
+    Get services and leaks for a domain.
+    """
+    response = CLIENT.get_domain("example.com")
+    if response.is_success():
+        print("Services:", response.json()["services"])
+        print("Leaks:", response.json()["leaks"])
+
+
+def example_bulk_stream():
+    """
+    Streaming bulk export - memory efficient for large datasets.
+    Results are yielded one by one instead of loading all into memory.
+    """
+    query = MustQuery(field=PluginField(Plugin.GitConfigHttpPlugin))
+    for aggregation in CLIENT.bulk_export_stream(queries=[query]):
+        for event in aggregation.events:
+            print(event.ip)
+
+
+def example_bulk_service_stream():
+    """
+    Streaming bulk service - memory efficient for large datasets.
+    """
+    query = MustQuery(field=PluginField(Plugin.GitConfigHttpPlugin))
+    for event in CLIENT.bulk_service_stream(queries=[query]):
+        print(event.ip)
+
+
 if __name__ == "__main__":
     example_get_host_filter_plugin()
     example_get_service_filter_plugin()
@@ -165,4 +230,9 @@ if __name__ == "__main__":
     example_get_leak_plugins_with_time()
     example_get_leak_raw_query()
     example_get_plugins()
+    example_search_simple()
+    example_search_service()
+    example_get_domain()
+    example_bulk_stream()
+    example_bulk_service_stream()
 ```
