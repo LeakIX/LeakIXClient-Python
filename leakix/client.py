@@ -7,10 +7,10 @@ from serde import Model, fields
 
 from leakix.domain import L9Subdomain
 from leakix.plugin import APIResult
-from leakix.query import EmptyQuery, Query
+from leakix.query import EmptyQuery, Query, RawQuery
 from leakix.response import ErrorResponse, RateLimitResponse, SuccessResponse
 
-__VERSION__ = "0.1.9"
+__VERSION__ = "0.2.0"
 
 
 class Scope(Enum):
@@ -42,6 +42,7 @@ class Client:
         }
         if api_key:
             self.headers["api-key"] = api_key
+        self._api_status: dict | None = None  # Cached API status
 
     def __get(self, url, params):
         r = requests.get(
@@ -224,3 +225,122 @@ class Client:
         else:
             return ErrorResponse(response=r, response_json=r.json())
         return r
+
+    def get_domain(self, domain: str):
+        """
+        Returns the list of services and associated leaks for a given domain.
+        """
+        url = f"{self.base_url}/domain/{domain}"
+        r = self.__get(url, params=None)
+        if r.is_success():
+            response_json = r.json()
+            formatted_result = HostResult.from_dict(response_json)
+            response_json = {
+                "services": formatted_result.Services,
+                "leaks": formatted_result.Leaks,
+            }
+            r.response_json = response_json
+        return r
+
+    def search(self, query: str, scope: str = "leak", page: int = 0):
+        """
+        Simple search using a query string.
+
+        This is a convenience method that accepts a raw query string like on the website.
+        For example: "+plugin:GitConfigHttpPlugin +country:FR"
+
+        Args:
+            query: The search query string (same syntax as the website)
+            scope: Either "leak" or "service" (default: "leak")
+            page: Page number for pagination (default: 0)
+
+        Returns:
+            A response object with the search results.
+
+        Example:
+            >>> client.search("+plugin:GitConfigHttpPlugin", scope="leak")
+            >>> client.search("+country:FR +port:22", scope="service")
+        """
+        queries = [RawQuery(query)]
+        if scope == "service":
+            return self.get_service(queries=queries, page=page)
+        return self.get_leak(queries=queries, page=page)
+
+    def bulk_export_stream(self, queries: list[Query] | None = None):
+        """
+        Streaming version of bulk_export. Yields L9Aggregation objects one by one.
+
+        This is more memory efficient for large result sets as it doesn't load
+        all results into memory at once.
+
+        Example:
+            >>> for aggregation in client.bulk_export_stream([MustQuery(PluginField(Plugin.GitConfigHttpPlugin))]):
+            ...     print(aggregation.events[0].ip)
+        """
+        url = f"{self.base_url}/bulk/search"
+        if queries is None or len(queries) == 0:
+            serialized_query = EmptyQuery().serialize()
+        else:
+            serialized_query = [q.serialize() for q in queries]
+            serialized_query = " ".join(serialized_query)
+            serialized_query = f"{serialized_query}"
+        params = {"q": serialized_query}
+        r = requests.get(url, params=params, headers=self.headers, stream=True)
+        if r.status_code != 200:
+            return
+        for line in r.iter_lines():
+            json_event = json.loads(line)
+            yield l9format.L9Aggregation.from_dict(json_event)
+
+    def get_api_status(self, force: bool = False) -> dict:
+        """
+        Check API status and subscription info via /api/user/info endpoint.
+
+        Results are cached per client instance. Use force=True to refresh.
+
+        Args:
+            force: Force refresh of cached status.
+
+        Returns:
+            Dict with username, email, level, is_pro, quota, features, created.
+        """
+        if self._api_status is not None and not force:
+            return self._api_status
+
+        if not self.api_key:
+            self._api_status = {
+                "authenticated": False,
+                "is_pro": False,
+                "features": [],
+                "quota": {"total": 0, "remaining": 0, "used": 0},
+            }
+            return self._api_status
+
+        url = f"{self.base_url}/api/user/info"
+        r = self.__get(url, params=None)
+        if r.is_success():
+            data = r.json()
+            self._api_status = {
+                "authenticated": True,
+                "username": data.get("username"),
+                "email": data.get("email"),
+                "level": data.get("level"),
+                "is_pro": data.get("is_pro", False),
+                "quota": data.get("quota", {}),
+                "features": data.get("features", []),
+                "created": data.get("created"),
+            }
+        else:
+            self._api_status = {
+                "authenticated": False,
+                "is_pro": False,
+                "features": [],
+                "quota": {"total": 0, "remaining": 0, "used": 0},
+            }
+
+        return self._api_status
+
+    def is_pro(self) -> bool:
+        """Check if the API key has Pro access. Result is cached."""
+        status = self.get_api_status()
+        return status.get("is_pro", False)

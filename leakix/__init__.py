@@ -1,3 +1,4 @@
+from leakix.async_client import AsyncClient as AsyncClient
 from leakix.client import __VERSION__ as __VERSION__
 from leakix.client import Client as Client
 from leakix.client import HostResult as HostResult
@@ -70,6 +71,7 @@ from leakix.response import (
 
 __all__ = [
     "__VERSION__",
+    "AsyncClient",
     "Client",
     "HostResult",
     "Scope",
