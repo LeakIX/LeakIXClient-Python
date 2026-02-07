@@ -2,7 +2,7 @@
 
 import asyncio
 import json
-from typing import AsyncIterator
+from collections.abc import AsyncIterator
 
 import httpx
 from l9format import l9format
