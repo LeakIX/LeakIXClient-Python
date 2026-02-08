@@ -2,24 +2,22 @@ from datetime import datetime
 
 import pytest
 
-from leakix.field import (
+from leakix import (
     AgeField,
     CountryField,
     CustomField,
-    IPField,
-    Operator,
-    PluginField,
-    PortField,
-    TimeField,
-    UpdateDateField,
-)
-from leakix.plugin import Plugin
-from leakix.query import (
     EmptyQuery,
+    IPField,
     MustNotQuery,
     MustQuery,
+    Operator,
+    Plugin,
+    PluginField,
+    PortField,
     RawQuery,
     ShouldQuery,
+    TimeField,
+    UpdateDateField,
 )
 
 

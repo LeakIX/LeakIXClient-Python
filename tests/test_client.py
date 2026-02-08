@@ -4,11 +4,16 @@ from pathlib import Path
 import pytest
 import requests_mock
 
-from leakix import Client
-from leakix.client import Scope
-from leakix.field import CountryField, PluginField, PortField
-from leakix.plugin import Plugin
-from leakix.query import MustQuery, RawQuery
+from leakix import (
+    Client,
+    CountryField,
+    MustQuery,
+    Plugin,
+    PluginField,
+    PortField,
+    RawQuery,
+    Scope,
+)
 
 RESULTS_DIR = Path(__file__).parent / "results"
 HOSTS_RESULTS_DIR = RESULTS_DIR / "host"
