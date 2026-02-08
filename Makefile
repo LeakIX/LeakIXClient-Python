@@ -53,6 +53,10 @@ check: check-format lint typecheck test ## Run all checks
 check-outdated: ## Check for outdated dependencies
 	poetry show --outdated || true
 
+.PHONY: lint-shell
+lint-shell: ## Lint shell scripts using shellcheck
+	shellcheck .github/scripts/*.sh
+
 .PHONY: clean
 clean: ## Clean build artifacts
 	rm -rf dist/ build/ *.egg-info/ .pytest_cache/ .mypy_cache/ .ruff_cache/
