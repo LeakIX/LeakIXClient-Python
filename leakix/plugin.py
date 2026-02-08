@@ -4,8 +4,8 @@ from serde import Model, fields
 
 
 class APIResult(Model):
-    name: fields.Str()
-    description: fields.Str()
+    name: fields.Str()  # type: ignore[valid-type]
+    description: fields.Str()  # type: ignore[valid-type]
 
 
 class Plugin(Enum):

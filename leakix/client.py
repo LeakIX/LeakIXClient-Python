@@ -24,8 +24,8 @@ class Scope(Enum):
 
 
 class HostResult(Model):
-    Services: fields.Optional(fields.List(fields.Nested(l9format.L9Event)))
-    Leaks: fields.Optional(fields.List(fields.Nested(l9format.L9Event)))
+    Services: fields.Optional(fields.List(fields.Nested(l9format.L9Event)))  # type: ignore[valid-type]
+    Leaks: fields.Optional(fields.List(fields.Nested(l9format.L9Event)))  # type: ignore[valid-type]
 
 
 DEFAULT_URL = "https://leakix.net"
@@ -97,9 +97,8 @@ class Client:
         if queries is None or len(queries) == 0:
             serialized_query = EmptyQuery().serialize()
         else:
-            serialized_query = [q.serialize() for q in queries]
-            serialized_query = " ".join(serialized_query)
-            serialized_query = f"{serialized_query}"
+            parts = [q.serialize() for q in queries]
+            serialized_query = " ".join(parts)
         url = f"{self.base_url}/search"
         r = self.__get(
             url=url,
@@ -188,9 +187,8 @@ class Client:
         if queries is None or len(queries) == 0:
             serialized_query = EmptyQuery().serialize()
         else:
-            serialized_query = [q.serialize() for q in queries]
-            serialized_query = " ".join(serialized_query)
-            serialized_query = f"{serialized_query}"
+            parts = [q.serialize() for q in queries]
+            serialized_query = " ".join(parts)
         params = {"q": serialized_query}
         r = requests.get(url, params=params, headers=self.headers, stream=True)
         if r.status_code == 200:
@@ -226,9 +224,8 @@ class Client:
         if queries is None or len(queries) == 0:
             serialized_query = EmptyQuery().serialize()
         else:
-            serialized_query = [q.serialize() for q in queries]
-            serialized_query = " ".join(serialized_query)
-            serialized_query = f"{serialized_query}"
+            parts = [q.serialize() for q in queries]
+            serialized_query = " ".join(parts)
         params = {"q": serialized_query}
         r = requests.get(url, params=params, headers=self.headers, stream=True)
         if r.status_code == 200:
