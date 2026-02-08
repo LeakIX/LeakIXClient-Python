@@ -2,6 +2,7 @@ from leakix.client import __VERSION__ as __VERSION__
 from leakix.client import Client as Client
 from leakix.client import HostResult as HostResult
 from leakix.client import Scope as Scope
+from leakix.domain import L9Subdomain as L9Subdomain
 from leakix.field import (
     AgeField as AgeField,
 )
@@ -59,9 +60,6 @@ from leakix.response import (
     ErrorResponse as ErrorResponse,
 )
 from leakix.response import (
-    R as R,
-)
-from leakix.response import (
     RateLimitResponse as RateLimitResponse,
 )
 from leakix.response import (
@@ -72,6 +70,7 @@ __all__ = [
     "__VERSION__",
     "Client",
     "HostResult",
+    "L9Subdomain",
     "Scope",
     # Fields
     "AgeField",
@@ -97,7 +96,6 @@ __all__ = [
     # Response
     "AbstractResponse",
     "ErrorResponse",
-    "R",
     "RateLimitResponse",
     "SuccessResponse",
 ]
