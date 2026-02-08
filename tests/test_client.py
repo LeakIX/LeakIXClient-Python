@@ -22,42 +22,42 @@ HOSTS_404_RESULTS_DIR = HOSTS_RESULTS_DIR / "404"
 
 
 @pytest.fixture
-def client():
+def client() -> None:
     return Client()
 
 
 @pytest.fixture
-def client_with_api_key():
+def client_with_api_key() -> None:
     return Client(api_key="test-api-key")
 
 
 @pytest.fixture
-def fake_ipv4():
+def fake_ipv4() -> None:
     return "33.33.33.33"
 
 
 class TestClientInit:
-    def test_default_base_url(self):
+    def test_default_base_url(self) -> None:
         client = Client()
         assert client.base_url == "https://leakix.net"
 
-    def test_custom_base_url(self):
+    def test_custom_base_url(self) -> None:
         client = Client(base_url="https://custom.leakix.net")
         assert client.base_url == "https://custom.leakix.net"
 
-    def test_api_key_in_headers(self):
+    def test_api_key_in_headers(self) -> None:
         client = Client(api_key="my-api-key")
         assert client.headers["api-key"] == "my-api-key"
 
-    def test_no_api_key_header_when_not_provided(self):
+    def test_no_api_key_header_when_not_provided(self) -> None:
         client = Client()
         assert "api-key" not in client.headers
 
-    def test_user_agent_header(self):
+    def test_user_agent_header(self) -> None:
         client = Client()
         assert "leakix-client-python" in client.headers["User-agent"]
 
-    def test_accept_header(self):
+    def test_accept_header(self) -> None:
         client = Client()
         assert client.headers["Accept"] == "application/json"
 
