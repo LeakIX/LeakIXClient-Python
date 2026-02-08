@@ -20,18 +20,18 @@ class CLI:
         before: str | None = None,
         after: str | None = None,
     ):
-        before_dt = datetime.strptime(before, DATETIME_FORMAT)
-        after_dt = datetime.strptime(after, DATETIME_FORMAT)
         client = Client(api_key=API_KEY)
 
         queries = []
         queries.append(RawQuery(query))
         if before is not None:
+            before_dt = datetime.strptime(before, DATETIME_FORMAT)
             before_dt_field = UpdateDateField(
                 before_dt, operator=Operator.StrictlyGreater
             )
             queries.append(MustQuery(before_dt_field))
         if after is not None:
+            after_dt = datetime.strptime(after, DATETIME_FORMAT)
             after_dt_field = UpdateDateField(
                 after_dt, operator=Operator.StrictlySmaller
             )
@@ -46,7 +46,7 @@ class CLI:
         else:
             raise Exception(
                 "API error (code = %d, message = %s)"
-                % (response.status_code, response.json())
+                % (response.status_code(), response.json())
             )
 
 
