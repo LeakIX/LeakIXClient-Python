@@ -63,32 +63,40 @@ class TestClientInit:
 
 
 class TestGetHost:
-    def test_get_host_success(self, client):
-        for f in HOSTS_SUCCESS_RESULTS_DIR.iterdir():
-            with open(f) as ff:
-                res_json = json.load(ff)
-            ipv4 = f.name[:-5]  # remove .json
-            with requests_mock.Mocker() as m:
-                url = f"{client.base_url}/host/{ipv4}"
-                m.get(url, json=res_json, status_code=200)
-                response = client.get_host(ipv4)
-                assert response.is_success()
-                assert len(response.json()["services"]) == 3
-                assert response.json()["leaks"] is None
+    @pytest.mark.parametrize(
+        "fixture_file",
+        list(HOSTS_SUCCESS_RESULTS_DIR.iterdir()),
+        ids=lambda f: f.stem,
+    )
+    def test_get_host_success(self, client, fixture_file):
+        with open(fixture_file) as ff:
+            res_json = json.load(ff)
+        ipv4 = fixture_file.stem
+        with requests_mock.Mocker() as m:
+            url = f"{client.base_url}/host/{ipv4}"
+            m.get(url, json=res_json, status_code=200)
+            response = client.get_host(ipv4)
+            assert response.is_success()
+            assert len(response.json()["services"]) == 3
+            assert response.json()["leaks"] is None
 
-    def test_get_host_404(self, client):
-        for f in HOSTS_404_RESULTS_DIR.iterdir():
-            with open(f) as ff:
-                res_json = json.load(ff)
-            ipv4 = f.name[:-5]  # remove .json
-            with requests_mock.Mocker() as m:
-                url = f"{client.base_url}/host/{ipv4}"
-                m.get(url, json=res_json, status_code=404)
-                response = client.get_host(ipv4)
-                assert response.is_error()
-                assert response.status_code() == 404
-                assert response.json()["title"] == "Not Found"
-                assert response.json()["description"] == "Host not found"
+    @pytest.mark.parametrize(
+        "fixture_file",
+        list(HOSTS_404_RESULTS_DIR.iterdir()),
+        ids=lambda f: f.stem,
+    )
+    def test_get_host_404(self, client, fixture_file):
+        with open(fixture_file) as ff:
+            res_json = json.load(ff)
+        ipv4 = fixture_file.stem
+        with requests_mock.Mocker() as m:
+            url = f"{client.base_url}/host/{ipv4}"
+            m.get(url, json=res_json, status_code=404)
+            response = client.get_host(ipv4)
+            assert response.is_error()
+            assert response.status_code() == 404
+            assert response.json()["title"] == "Not Found"
+            assert response.json()["description"] == "Host not found"
 
     def test_get_host_429(self, client, fake_ipv4):
         res_json = {"reason": "rate-limit", "status": "error"}
