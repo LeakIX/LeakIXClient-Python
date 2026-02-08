@@ -193,6 +193,10 @@ class TestGetPlugins:
             response = client_with_api_key.get_plugins()
             assert response.is_success()
             assert len(response.json()) == 2
+            assert response.json()[0].name == "GrafanaOpenPlugin"
+            assert response.json()[0].description == "Grafana open instances"
+            assert response.json()[1].name == "MongoOpenPlugin"
+            assert response.json()[1].description == "MongoDB open instances"
 
     def test_get_plugins_unauthorized(self, client):
         res_json = {"error": "unauthorized"}
@@ -200,6 +204,7 @@ class TestGetPlugins:
             m.get(f"{client.base_url}/api/plugins", json=res_json, status_code=401)
             response = client.get_plugins()
             assert response.is_error()
+            assert response.status_code() == 401
 
 
 class TestGetSubdomains:
@@ -225,6 +230,10 @@ class TestGetSubdomains:
             response = client.get_subdomains("example.com")
             assert response.is_success()
             assert len(response.json()) == 2
+            assert response.json()[0].subdomain == "api.example.com"
+            assert response.json()[0].distinct_ips == 2
+            assert response.json()[1].subdomain == "www.example.com"
+            assert response.json()[1].distinct_ips == 1
 
     def test_get_subdomains_empty(self, client):
         with requests_mock.Mocker() as m:
