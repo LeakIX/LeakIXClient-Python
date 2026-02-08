@@ -1,4 +1,5 @@
-from leakix.client import __VERSION__ as __VERSION__
+from importlib.metadata import version
+
 from leakix.client import Client as Client
 from leakix.client import HostResult as HostResult
 from leakix.client import Scope as Scope
@@ -68,8 +69,10 @@ from leakix.response import (
     SuccessResponse as SuccessResponse,
 )
 
+__version__ = version("leakix")
+
 __all__ = [
-    "__VERSION__",
+    "__version__",
     "Client",
     "HostResult",
     "Scope",
