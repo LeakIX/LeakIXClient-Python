@@ -1,6 +1,6 @@
 from unittest.mock import Mock
 
-from leakix.response import (
+from leakix import (
     ErrorResponse,
     RateLimitResponse,
     SuccessResponse,
