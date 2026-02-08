@@ -60,7 +60,7 @@ class TestClientInit:
 class TestGetHost:
     def test_get_host_success(self, client):
         for f in HOSTS_SUCCESS_RESULTS_DIR.iterdir():
-            with open(str(f)) as ff:
+            with open(f) as ff:
                 res_json = json.load(ff)
             ipv4 = f.name[:-5]  # remove .json
             with requests_mock.Mocker() as m:
@@ -73,7 +73,7 @@ class TestGetHost:
 
     def test_get_host_404(self, client):
         for f in HOSTS_404_RESULTS_DIR.iterdir():
-            with open(str(f)) as ff:
+            with open(f) as ff:
                 res_json = json.load(ff)
             ipv4 = f.name[:-5]  # remove .json
             with requests_mock.Mocker() as m:
