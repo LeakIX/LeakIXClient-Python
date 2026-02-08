@@ -1,6 +1,7 @@
 import json
 from enum import Enum
 from importlib.metadata import version
+from typing import Any
 
 import requests
 from l9format import l9format
@@ -9,7 +10,12 @@ from serde import Model, fields
 from leakix.domain import L9Subdomain
 from leakix.plugin import APIResult
 from leakix.query import EmptyQuery, Query
-from leakix.response import ErrorResponse, RateLimitResponse, SuccessResponse
+from leakix.response import (
+    AbstractResponse,
+    ErrorResponse,
+    RateLimitResponse,
+    SuccessResponse,
+)
 
 
 class Scope(Enum):
@@ -32,17 +38,17 @@ class Client:
         self,
         api_key: str | None = None,
         base_url: str | None = DEFAULT_URL,
-    ):
+    ) -> None:
         self.api_key = api_key
         self.base_url = base_url if base_url else DEFAULT_URL
-        self.headers = {
+        self.headers: dict[str, str] = {
             "Accept": "application/json",
             "User-agent": f"leakix-client-python/{version('leakix')}",
         }
         if api_key:
             self.headers["api-key"] = api_key
 
-    def __get(self, url, params):
+    def __get(self, url: str, params: dict[str, Any] | None) -> AbstractResponse:
         r = requests.get(
             url,
             params=params,
@@ -58,7 +64,12 @@ class Client:
         else:
             return ErrorResponse(response=r, response_json=r.json())
 
-    def get(self, scope: Scope, queries: list[Query] | None = None, page: int = 0):
+    def get(
+        self,
+        scope: Scope,
+        queries: list[Query] | None = None,
+        page: int = 0,
+    ) -> AbstractResponse:
         """
         The function takes a scope (either "leaks" or "services"). The value can be constructed using `Scope.SERVICE` or
         `Scope.LEAK`.
@@ -91,11 +102,18 @@ class Client:
             serialized_query = f"{serialized_query}"
         url = f"{self.base_url}/search"
         r = self.__get(
-            url=url, params={"scope": scope.value, "q": serialized_query, "page": page}
+            url=url,
+            params={
+                "scope": scope.value,
+                "q": serialized_query,
+                "page": page,
+            },
         )
         return r
 
-    def get_service(self, queries: list[Query] | None = None, page: int = 0):
+    def get_service(
+        self, queries: list[Query] | None = None, page: int = 0
+    ) -> AbstractResponse:
         """
         Shortcut for `get` with the scope `Scope.Service`.
 
@@ -107,7 +125,9 @@ class Client:
             ]
         return r
 
-    def get_leak(self, queries: list[Query] | None = None, page: int = 0):
+    def get_leak(
+        self, queries: list[Query] | None = None, page: int = 0
+    ) -> AbstractResponse:
         """
         Shortcut for `get` with the scope `Scope.Leak`.
         """
@@ -118,7 +138,7 @@ class Client:
             ]
         return r
 
-    def get_host(self, ipv4: str):
+    def get_host(self, ipv4: str) -> AbstractResponse:
         """
         Returns the list of services and associated leaks for a given host. Only the ipv4 format is supported at the
         moment.
@@ -135,7 +155,7 @@ class Client:
             r.response_json = response_json
         return r
 
-    def get_plugins(self):
+    def get_plugins(self) -> AbstractResponse:
         """
         Returns the list of plugins the authenticated user with the given API key has access to.
 
@@ -151,7 +171,7 @@ class Client:
             r.response_json = [APIResult.from_dict(d) for d in r.json()]
         return r
 
-    def get_subdomains(self, domain: str):
+    def get_subdomains(self, domain: str) -> AbstractResponse:
         """
         Returns the list of subdomains for a given domain.
         The output is a list of `L9Subdomain` objects. The fields are `subdomain`, `distinct_ips` and `last_seen`.
@@ -163,7 +183,7 @@ class Client:
             r.response_json = [L9Subdomain.from_dict(d) for d in r.json()]
         return r
 
-    def bulk_export(self, queries: list[Query] | None = None):
+    def bulk_export(self, queries: list[Query] | None = None) -> AbstractResponse:
         url = f"{self.base_url}/bulk/search"
         if queries is None or len(queries) == 0:
             serialized_query = EmptyQuery().serialize()
@@ -186,7 +206,9 @@ class Client:
         else:
             return ErrorResponse(response=r, response_json=r.json())
 
-    def bulk_export_last_event(self, queries: list[Query] | None = None):
+    def bulk_export_last_event(
+        self, queries: list[Query] | None = None
+    ) -> AbstractResponse:
         response = self.bulk_export(queries)
         if response.is_success():
             for aggreg in response.json():
@@ -199,7 +221,7 @@ class Client:
                 aggreg.events = [sorted_events[0]]
         return response
 
-    def bulk_service(self, queries: list[Query] | None = None):
+    def bulk_service(self, queries: list[Query] | None = None) -> AbstractResponse:
         url = f"{self.base_url}/bulk/service"
         if queries is None or len(queries) == 0:
             serialized_query = EmptyQuery().serialize()

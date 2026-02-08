@@ -29,7 +29,7 @@ class Query(AbstractQuery):
     A list of fields can be found in `field.py`.
     """
 
-    def __init__(self, field: CustomField):
+    def __init__(self, field: CustomField) -> None:
         self.field = field
 
 
@@ -70,7 +70,7 @@ class RawQuery(AbstractQuery):
     RawQuery("+host:.be").
     """
 
-    def __init__(self, raw_q: str):
+    def __init__(self, raw_q: str) -> None:
         self.raw_q = raw_q
 
     def serialize(self) -> str:
