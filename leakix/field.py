@@ -59,7 +59,8 @@ class IPField(CustomField):
 
 class PortField(CustomField):
     def __init__(self, port: int, operator: Operator | None = None) -> None:
-        assert 0 <= port < 65536
+        if not (0 <= port < 65536):
+            raise ValueError(f"Port must be between 0 and 65535, got {port}")
         super().__init__(v=str(port), operator=operator, field_name="port")
 
 
