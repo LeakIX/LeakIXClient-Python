@@ -185,7 +185,6 @@ class Client:
             return ErrorResponse(response=r, response_json=[], status_code=200)
         else:
             return ErrorResponse(response=r, response_json=r.json())
-        return r
 
     def bulk_export_last_event(self, queries: list[Query] | None = None):
         response = self.bulk_export(queries)
@@ -222,4 +221,3 @@ class Client:
             return ErrorResponse(response=r, response_json=[], status_code=200)
         else:
             return ErrorResponse(response=r, response_json=r.json())
-        return r
