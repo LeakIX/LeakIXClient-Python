@@ -1,5 +1,6 @@
 import json
 from enum import Enum
+from importlib.metadata import version
 
 import requests
 from l9format import l9format
@@ -9,8 +10,6 @@ from leakix.domain import L9Subdomain
 from leakix.plugin import APIResult
 from leakix.query import EmptyQuery, Query
 from leakix.response import ErrorResponse, RateLimitResponse, SuccessResponse
-
-__VERSION__ = "0.1.9"
 
 
 class Scope(Enum):
@@ -38,7 +37,7 @@ class Client:
         self.base_url = base_url if base_url else DEFAULT_URL
         self.headers = {
             "Accept": "application/json",
-            "User-agent": f"leakix-client-python/{__VERSION__}",
+            "User-agent": f"leakix-client-python/{version('leakix')}",
         }
         if api_key:
             self.headers["api-key"] = api_key
