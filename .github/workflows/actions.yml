@@ -28,6 +28,8 @@ jobs:
         run: make check-format
       - name: Run linter
         run: make lint
+      - name: Type check
+        run: make typecheck
       - name: Security audit
         run: make audit
 
@@ -53,5 +55,7 @@ jobs:
         run: poetry run ruff format --check leakix/ tests/ example/ executable/
       - name: Run linter
         run: poetry run ruff check leakix/ tests/ example/ executable/
+      - name: Type check
+        run: poetry run mypy leakix/
       - name: Security audit
         run: poetry run pip-audit

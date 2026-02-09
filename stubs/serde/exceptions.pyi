@@ -1,0 +1,6 @@
+from typing import Any
+
+class ValidationError(Exception):
+    def __init__(self, message: str, **kwargs: Any) -> None: ...
+
+class ContextError(Exception): ...

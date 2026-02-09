@@ -18,6 +18,7 @@ mypy = "*"
 requests-mock = "*"
 ruff = "*"
 pip-audit = "*"
+types-requests = "^2.32.4.20260107"
 
 [tool.ruff]
 line-length = 88
@@ -40,6 +41,7 @@ python_version = "3.13"
 warn_return_any = true
 warn_unused_configs = true
 ignore_missing_imports = false
+mypy_path = "stubs"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
