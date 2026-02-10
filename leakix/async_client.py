@@ -3,6 +3,7 @@
 import asyncio
 import json
 from collections.abc import AsyncIterator
+from importlib.metadata import version
 
 import httpx
 from l9format import l9format
@@ -10,8 +11,6 @@ from l9format import l9format
 from leakix.domain import L9Subdomain
 from leakix.plugin import APIResult
 from leakix.query import EmptyQuery, Query, RawQuery
-
-__VERSION__ = "0.2.0"
 
 DEFAULT_URL = "https://leakix.net"
 DEFAULT_TIMEOUT = 30.0
@@ -33,7 +32,7 @@ class AsyncClient:
         self.timeout = timeout
         self.headers = {
             "Accept": "application/json",
-            "User-agent": f"leakix-client-python/{__VERSION__}",
+            "User-agent": f"leakix-client-python/{version('leakix')}",
         }
         if api_key:
             self.headers["api-key"] = api_key

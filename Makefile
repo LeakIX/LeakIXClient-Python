@@ -38,6 +38,10 @@ lint: ## Run ruff linter
 lint-fix: ## Run ruff linter with auto-fix
 	poetry run ruff check --fix leakix/ tests/ example/ executable/
 
+.PHONY: lint-shell
+lint-shell: ## Lint shell scripts using shellcheck
+	shellcheck .github/scripts/*.sh
+
 .PHONY: typecheck
 typecheck: ## Run mypy type checker
 	poetry run mypy leakix/
@@ -52,6 +56,10 @@ check: check-format lint typecheck test ## Run all checks
 .PHONY: check-outdated
 check-outdated: ## Check for outdated dependencies
 	poetry show --outdated || true
+
+.PHONY: lint-shell
+lint-shell: ## Lint shell scripts using shellcheck
+	shellcheck .github/scripts/*.sh
 
 .PHONY: clean
 clean: ## Clean build artifacts

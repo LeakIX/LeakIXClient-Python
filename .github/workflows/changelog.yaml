@@ -1,0 +1,40 @@
+name: CHANGELOG related checks per pull requests
+on:
+  pull_request:
+    types: [assigned, opened, synchronize, reopened, labeled, unlabeled]
+    branches:
+      - main
+  merge_group:
+    types: [checks_requested]
+
+jobs:
+  check-changelog:
+    name: Check changelog action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: tarides/changelog-check-action@v3
+        with:
+          changelog: CHANGELOG.md
+
+  check-changelog-commit:
+    name: Check changelog is in dedicated commit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Verify CHANGELOG.md changes are in own commit
+        run: >
+          .github/scripts/check-changelog-commit.sh
+          "${{ github.event.pull_request.base.sha }}"
+
+  shellcheck:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install shellcheck
+        run: sudo apt-get install -y shellcheck
+      - name: Run shellcheck
+        run: make lint-shell

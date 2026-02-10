@@ -4,11 +4,16 @@ from pathlib import Path
 import pytest
 import requests_mock
 
-from leakix import Client
-from leakix.client import Scope
-from leakix.field import CountryField, PluginField, PortField
-from leakix.plugin import Plugin
-from leakix.query import MustQuery, RawQuery
+from leakix import (
+    Client,
+    CountryField,
+    MustQuery,
+    Plugin,
+    PluginField,
+    PortField,
+    RawQuery,
+    Scope,
+)
 
 RESULTS_DIR = Path(__file__).parent / "results"
 HOSTS_RESULTS_DIR = RESULTS_DIR / "host"
@@ -17,73 +22,81 @@ HOSTS_404_RESULTS_DIR = HOSTS_RESULTS_DIR / "404"
 
 
 @pytest.fixture
-def client():
+def client() -> None:
     return Client()
 
 
 @pytest.fixture
-def client_with_api_key():
+def client_with_api_key() -> None:
     return Client(api_key="test-api-key")
 
 
 @pytest.fixture
-def fake_ipv4():
+def fake_ipv4() -> None:
     return "33.33.33.33"
 
 
 class TestClientInit:
-    def test_default_base_url(self):
+    def test_default_base_url(self) -> None:
         client = Client()
         assert client.base_url == "https://leakix.net"
 
-    def test_custom_base_url(self):
+    def test_custom_base_url(self) -> None:
         client = Client(base_url="https://custom.leakix.net")
         assert client.base_url == "https://custom.leakix.net"
 
-    def test_api_key_in_headers(self):
+    def test_api_key_in_headers(self) -> None:
         client = Client(api_key="my-api-key")
         assert client.headers["api-key"] == "my-api-key"
 
-    def test_no_api_key_header_when_not_provided(self):
+    def test_no_api_key_header_when_not_provided(self) -> None:
         client = Client()
         assert "api-key" not in client.headers
 
-    def test_user_agent_header(self):
+    def test_user_agent_header(self) -> None:
         client = Client()
         assert "leakix-client-python" in client.headers["User-agent"]
 
-    def test_accept_header(self):
+    def test_accept_header(self) -> None:
         client = Client()
         assert client.headers["Accept"] == "application/json"
 
 
 class TestGetHost:
-    def test_get_host_success(self, client):
-        for f in HOSTS_SUCCESS_RESULTS_DIR.iterdir():
-            with open(str(f)) as ff:
-                res_json = json.load(ff)
-            ipv4 = f.name[:-5]  # remove .json
-            with requests_mock.Mocker() as m:
-                url = f"{client.base_url}/host/{ipv4}"
-                m.get(url, json=res_json, status_code=200)
-                response = client.get_host(ipv4)
-                assert response.is_success()
-                assert len(response.json()["services"]) == 3
-                assert response.json()["leaks"] is None
+    @pytest.mark.parametrize(
+        "fixture_file",
+        list(HOSTS_SUCCESS_RESULTS_DIR.iterdir()),
+        ids=lambda f: f.stem,
+    )
+    def test_get_host_success(self, client, fixture_file):
+        with open(fixture_file) as ff:
+            res_json = json.load(ff)
+        ipv4 = fixture_file.stem
+        with requests_mock.Mocker() as m:
+            url = f"{client.base_url}/host/{ipv4}"
+            m.get(url, json=res_json, status_code=200)
+            response = client.get_host(ipv4)
+            assert response.is_success()
+            assert len(response.json()["services"]) == 3
+            assert response.json()["leaks"] is None
 
-    def test_get_host_404(self, client):
-        for f in HOSTS_404_RESULTS_DIR.iterdir():
-            with open(str(f)) as ff:
-                res_json = json.load(ff)
-            ipv4 = f.name[:-5]  # remove .json
-            with requests_mock.Mocker() as m:
-                url = f"{client.base_url}/host/{ipv4}"
-                m.get(url, json=res_json, status_code=404)
-                response = client.get_host(ipv4)
-                assert response.is_error()
-                assert response.status_code() == 404
-                assert response.json()["title"] == "Not Found"
-                assert response.json()["description"] == "Host not found"
+    @pytest.mark.parametrize(
+        "fixture_file",
+        list(HOSTS_404_RESULTS_DIR.iterdir()),
+        ids=lambda f: f.stem,
+    )
+    def test_get_host_404(self, client, fixture_file):
+        with open(fixture_file) as ff:
+            res_json = json.load(ff)
+        ipv4 = fixture_file.stem
+        with requests_mock.Mocker() as m:
+            url = f"{client.base_url}/host/{ipv4}"
+            m.get(url, json=res_json, status_code=404)
+            response = client.get_host(ipv4)
+            assert response.is_error()
+            assert response.status_code() == 404
+            assert response.json()["title"] == "Not Found"
+            assert response.json()["description"] == "Host not found"
 
     def test_get_host_429(self, client, fake_ipv4):
         res_json = {"reason": "rate-limit", "status": "error"}
@@ -193,6 +206,10 @@ class TestGetPlugins:
             response = client_with_api_key.get_plugins()
             assert response.is_success()
             assert len(response.json()) == 2
+            assert response.json()[0].name == "GrafanaOpenPlugin"
+            assert response.json()[0].description == "Grafana open instances"
+            assert response.json()[1].name == "MongoOpenPlugin"
+            assert response.json()[1].description == "MongoDB open instances"
 
     def test_get_plugins_unauthorized(self, client):
         res_json = {"error": "unauthorized"}
@@ -200,6 +217,7 @@ class TestGetPlugins:
             m.get(f"{client.base_url}/api/plugins", json=res_json, status_code=401)
             response = client.get_plugins()
             assert response.is_error()
+            assert response.status_code() == 401
 
 
 class TestGetSubdomains:
@@ -225,6 +243,10 @@ class TestGetSubdomains:
             response = client.get_subdomains("example.com")
             assert response.is_success()
             assert len(response.json()) == 2
+            assert response.json()[0].subdomain == "api.example.com"
+            assert response.json()[0].distinct_ips == 2
+            assert response.json()[1].subdomain == "www.example.com"
+            assert response.json()[1].distinct_ips == 1
 
     def test_get_subdomains_empty(self, client):
         with requests_mock.Mocker() as m:
