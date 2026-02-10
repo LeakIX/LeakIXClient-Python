@@ -8,6 +8,26 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-02-XX
+
+### Added
+
+- Async client (`AsyncClient`) with full async/await support using
+  httpx ([8895e58], [#28])
+- Simple `search()` method accepting raw query strings on both
+  clients ([8895e58], [#28])
+- `get_domain()` method for domain lookups ([8895e58], [#28])
+- `get_api_status()` and `is_pro()` methods for account status
+  detection ([8895e58], [#28])
+- `bulk_export_stream()` streaming generator for memory-efficient
+  bulk exports ([8895e58], [#28])
+
+### Changed
+
+- Bumped l9format from 1.3.2 to 1.4.0 ([b47ade8], [#28])
+- Lowered minimum Python requirement from 3.13 to 3.11 ([8895e58],
+  [#28])
+
 ## [0.1.10] - 2024-12-XX
 
 ### Changed
@@ -38,11 +58,14 @@ and this project adheres to
 - Query building with MustQuery, MustNotQuery, ShouldQuery
 - Field filters: TimeField, PluginField, IPField, PortField, CountryField
 
-[unreleased]: https://github.com/LeakIX/LeakIXClient-Python/compare/v0.1.10...HEAD
+[unreleased]: https://github.com/LeakIX/LeakIXClient-Python/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/LeakIX/LeakIXClient-Python/compare/v0.1.10...v0.2.0
 [0.1.10]: https://github.com/LeakIX/LeakIXClient-Python/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/LeakIX/LeakIXClient-Python/releases/tag/v0.1.9
 
 <!-- Commit links -->
+[8895e58]: https://github.com/LeakIX/LeakIXClient-Python/commit/8895e58
+[b47ade8]: https://github.com/LeakIX/LeakIXClient-Python/commit/b47ade8
 [65c5121]: https://github.com/LeakIX/LeakIXClient-Python/commit/65c5121
 [0975c1c]: https://github.com/LeakIX/LeakIXClient-Python/commit/0975c1c
 [7cb5dae]: https://github.com/LeakIX/LeakIXClient-Python/commit/7cb5dae
@@ -50,3 +73,6 @@ and this project adheres to
 [6777ad9]: https://github.com/LeakIX/LeakIXClient-Python/commit/6777ad9
 [62550bc]: https://github.com/LeakIX/LeakIXClient-Python/commit/62550bc
 [4dd4948]: https://github.com/LeakIX/LeakIXClient-Python/commit/4dd4948
+
+<!-- PR links -->
+[#28]: https://github.com/LeakIX/LeakIXClient-Python/pull/28

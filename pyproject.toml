@@ -1,13 +1,17 @@
 [tool.poetry]
 name = "leakix"
-version = "0.1.10"
+version = "0.2.0"
 description = "Official python client for LeakIX (https://leakix.net)"
-authors = ["Danny Willems <danny@leakix.net>"]
+authors = [
+    "Danny Willems <danny@leakix.net>",
+    "Valentin Lobstein <valentin@leakix.net>",
+]
 
 [tool.poetry.dependencies]
-python = "^3.13"
+python = "^3.11"
 requests = "*"
-l9format = "=1.3.2"
+httpx = "^0.28.0"
+l9format = "=1.4.0"
 fire = ">=0.5,<0.8"
 
 [tool.poetry.group.dev.dependencies]
@@ -21,7 +25,7 @@ pip-audit = "*"
 
 [tool.ruff]
 line-length = 88
-target-version = "py313"
+target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
@@ -36,7 +40,7 @@ ignore = ["E501"]
 quote-style = "double"
 
 [tool.mypy]
-python_version = "3.13"
+python_version = "3.11"
 warn_return_any = true
 warn_unused_configs = true
 ignore_missing_imports = false
