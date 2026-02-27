@@ -6,9 +6,10 @@
 Official LeakIX python client
 
 ## Install
+### Using pipx, pipenvn or virtualenv is recommended.
 
 ```
-pip install leakix
+pipx install leakix
 ```
 
 To run tests, use `poetry run pytest`.
