@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- Updated l9format requirement from =1.3.2 to =1.4.0 ([ae676d9])
+
 ## [0.1.10] - 2024-12-XX
 
 ### Changed
@@ -43,6 +47,7 @@ and this project adheres to
 [0.1.9]: https://github.com/LeakIX/LeakIXClient-Python/releases/tag/v0.1.9
 
 <!-- Commit links -->
+[ae676d9]: https://github.com/LeakIX/LeakIXClient-Python/commit/ae676d9
 [65c5121]: https://github.com/LeakIX/LeakIXClient-Python/commit/65c5121
 [0975c1c]: https://github.com/LeakIX/LeakIXClient-Python/commit/0975c1c
 [7cb5dae]: https://github.com/LeakIX/LeakIXClient-Python/commit/7cb5dae
