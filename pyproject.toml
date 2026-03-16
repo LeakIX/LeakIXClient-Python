@@ -1,23 +1,25 @@
-[tool.poetry]
+[project]
 name = "leakix"
 version = "0.1.10"
 description = "Official python client for LeakIX (https://leakix.net)"
-authors = ["Danny Willems <danny@leakix.net>"]
+authors = [{ name = "Danny Willems", email = "danny@leakix.net" }]
+requires-python = ">=3.13"
+dependencies = [
+    "requests",
+    "l9format==1.4.0",
+    "fire>=0.5,<0.8",
+]
 
-[tool.poetry.dependencies]
-python = "^3.13"
-requests = "*"
-l9format = "=1.4.0"
-fire = ">=0.5,<0.8"
-
-[tool.poetry.group.dev.dependencies]
-python-decouple = "*"
-pytest = "*"
-pytest-cov = "*"
-mypy = "*"
-requests-mock = "*"
-ruff = "*"
-pip-audit = "*"
+[dependency-groups]
+dev = [
+    "python-decouple",
+    "pytest",
+    "pytest-cov",
+    "mypy",
+    "requests-mock",
+    "ruff",
+    "pip-audit",
+]
 
 [tool.ruff]
 line-length = 88
@@ -46,5 +48,5 @@ testpaths = ["tests"]
 addopts = "-v"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"

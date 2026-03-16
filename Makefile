@@ -8,35 +8,35 @@ help: ## Ask for help!
 
 .PHONY: install
 install: ## Install dependencies
-	poetry install
+	uv sync
 
 .PHONY: build
 build: ## Build the package
-	poetry build
+	uv build
 
 .PHONY: test
 test: ## Run tests
-	poetry run pytest
+	uv run pytest
 
 .PHONY: test-cov
 test-cov: ## Run tests with coverage
-	poetry run pytest --cov=leakix --cov-report=term-missing
+	uv run pytest --cov=leakix --cov-report=term-missing
 
 .PHONY: format
 format: ## Format code with ruff
-	poetry run ruff format leakix/ tests/ example/ executable/
+	uv run ruff format leakix/ tests/ example/ executable/
 
 .PHONY: check-format
 check-format: ## Check code formatting
-	poetry run ruff format --check leakix/ tests/ example/ executable/
+	uv run ruff format --check leakix/ tests/ example/ executable/
 
 .PHONY: lint
 lint: ## Run ruff linter
-	poetry run ruff check leakix/ tests/ example/ executable/
+	uv run ruff check leakix/ tests/ example/ executable/
 
 .PHONY: lint-fix
 lint-fix: ## Run ruff linter with auto-fix
-	poetry run ruff check --fix leakix/ tests/ example/ executable/
+	uv run ruff check --fix leakix/ tests/ example/ executable/
 
 .PHONY: lint-shell
 lint-shell: ## Lint shell scripts using shellcheck
@@ -44,18 +44,18 @@ lint-shell: ## Lint shell scripts using shellcheck
 
 .PHONY: typecheck
 typecheck: ## Run mypy type checker
-	poetry run mypy leakix/
+	uv run mypy leakix/
 
 .PHONY: audit
 audit: ## Run security audit
-	poetry run pip-audit
+	uv run pip-audit
 
 .PHONY: check
 check: check-format lint typecheck test ## Run all checks
 
 .PHONY: check-outdated
 check-outdated: ## Check for outdated dependencies
-	poetry show --outdated || true
+	uv pip list --outdated || true
 
 .PHONY: clean
 clean: ## Clean build artifacts
