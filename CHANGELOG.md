@@ -11,6 +11,12 @@ and this project adheres to
 ### Changed
 
 - Updated l9format requirement from =1.3.2 to =1.4.0 ([ae676d9])
+- Updated l9format requirement from =1.4.0 to =2.0.0 ([df916e5], [#68])
+
+### Removed
+
+- Removed dependency on serde (unmaintained), replaced with dataclasses
+  and l9format.l9format.Model ([df916e5], [#68])
 
 ### Infrastructure
 
@@ -54,6 +60,7 @@ and this project adheres to
 [0.1.9]: https://github.com/LeakIX/LeakIXClient-Python/releases/tag/v0.1.9
 
 <!-- Commit links -->
+[df916e5]: https://github.com/LeakIX/LeakIXClient-Python/commit/df916e5
 [14bc55e]: https://github.com/LeakIX/LeakIXClient-Python/commit/14bc55e
 [a652654]: https://github.com/LeakIX/LeakIXClient-Python/commit/a652654
 [3967e42]: https://github.com/LeakIX/LeakIXClient-Python/commit/3967e42
@@ -70,3 +77,4 @@ and this project adheres to
 [#66]: https://github.com/LeakIX/LeakIXClient-Python/pull/66
 [#65]: https://github.com/LeakIX/LeakIXClient-Python/issues/65
 [#67]: https://github.com/LeakIX/LeakIXClient-Python/issues/67
+[#68]: https://github.com/LeakIX/LeakIXClient-Python/pull/68
