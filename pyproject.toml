@@ -3,7 +3,7 @@ name = "leakix"
 version = "0.1.10"
 description = "Official python client for LeakIX (https://leakix.net)"
 authors = [{ name = "Danny Willems", email = "danny@leakix.net" }]
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
     "requests",
     "l9format==2.0.0",
@@ -23,7 +23,7 @@ dev = [
 
 [tool.ruff]
 line-length = 88
-target-version = "py313"
+target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
@@ -38,7 +38,7 @@ ignore = ["E501"]
 quote-style = "double"
 
 [tool.mypy]
-python_version = "3.13"
+python_version = "3.11"
 warn_return_any = true
 warn_unused_configs = true
 ignore_missing_imports = false
