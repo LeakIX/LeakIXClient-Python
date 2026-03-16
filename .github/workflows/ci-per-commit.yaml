@@ -1,0 +1,66 @@
+name: CI per commit
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [labeled]
+    branches:
+      - main
+
+jobs:
+  check-label:
+    name: Check for ci:per-commit label
+    runs-on: ubuntu-latest
+    outputs:
+      has_label: ${{ steps.check.outputs.has_label }}
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check for label
+        id: check
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          .github/scripts/check-ci-per-commit-label.sh \
+            "${{ github.event_name }}" \
+            "${{ github.repository }}" \
+            "${{ github.sha }}" \
+            '${{ toJSON(github.event.pull_request.labels.*.name) }}' \
+            >> "$GITHUB_OUTPUT"
+
+  ci-per-commit:
+    name: CI per commit
+    needs: check-label
+    if: needs.check-label.outputs.has_label == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      - name: Install GNU sed (macOS)
+        if: runner.os == 'macOS'
+        run: brew install gnu-sed
+      - name: Install poetry
+        run: pip install poetry==2.3.1
+      - name: Determine commit range
+        id: range
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+            HEAD="${{ github.event.pull_request.head.sha }}"
+          else
+            BASE="${{ github.event.before }}"
+            HEAD="${{ github.sha }}"
+          fi
+          echo "base=${BASE}" >> "$GITHUB_OUTPUT"
+          echo "head=${HEAD}" >> "$GITHUB_OUTPUT"
+      - name: Run CI on each commit
+        run: |
+          .github/scripts/run-ci-per-commit.sh \
+            "${{ steps.range.outputs.base }}" \
+            "${{ steps.range.outputs.head }}"
