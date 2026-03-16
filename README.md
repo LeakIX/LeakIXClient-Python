@@ -11,7 +11,7 @@ Official LeakIX python client
 pip install leakix
 ```
 
-To run tests, use `poetry run pytest`.
+To run tests, use `make test`.
 
 ## Documentation
 
