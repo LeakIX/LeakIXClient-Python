@@ -1,3 +1,4 @@
+import dataclasses
 import json
 from enum import Enum
 from importlib.metadata import version
@@ -5,7 +6,7 @@ from typing import Any
 
 import requests
 from l9format import l9format
-from serde import Model, fields
+from l9format.l9format import Model
 
 from leakix.domain import L9Subdomain
 from leakix.plugin import APIResult
@@ -23,9 +24,10 @@ class Scope(Enum):
     LEAK = "leak"
 
 
+@dataclasses.dataclass
 class HostResult(Model):
-    Services: fields.Optional(fields.List(fields.Nested(l9format.L9Event)))
-    Leaks: fields.Optional(fields.List(fields.Nested(l9format.L9Event)))
+    Services: list[l9format.L9Event] | None = None
+    Leaks: list[l9format.L9Event] | None = None
 
 
 DEFAULT_URL = "https://leakix.net"
