@@ -16,6 +16,7 @@ and this project adheres to
 
 - CI: use Makefile targets in Windows job and add sequential per-commit
   testing triggered by the ci:per-commit label ([3967e42], [#66])
+- Remove duplicated lint-shell target in Makefile ([a652654], [#67])
 
 ## [0.1.10] - 2024-12-XX
 
@@ -52,6 +53,7 @@ and this project adheres to
 [0.1.9]: https://github.com/LeakIX/LeakIXClient-Python/releases/tag/v0.1.9
 
 <!-- Commit links -->
+[a652654]: https://github.com/LeakIX/LeakIXClient-Python/commit/a652654
 [3967e42]: https://github.com/LeakIX/LeakIXClient-Python/commit/3967e42
 [ae676d9]: https://github.com/LeakIX/LeakIXClient-Python/commit/ae676d9
 [65c5121]: https://github.com/LeakIX/LeakIXClient-Python/commit/65c5121
@@ -64,3 +66,4 @@ and this project adheres to
 
 <!-- PR links -->
 [#66]: https://github.com/LeakIX/LeakIXClient-Python/pull/66
+[#67]: https://github.com/LeakIX/LeakIXClient-Python/issues/67
