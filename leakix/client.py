@@ -2,7 +2,7 @@ import dataclasses
 import json
 from enum import Enum
 from importlib.metadata import version
-from typing import Any
+from typing import Any, cast
 
 import requests
 from l9format import l9format
@@ -99,9 +99,7 @@ class Client:
         if queries is None or len(queries) == 0:
             serialized_query = EmptyQuery().serialize()
         else:
-            serialized_query = [q.serialize() for q in queries]
-            serialized_query = " ".join(serialized_query)
-            serialized_query = f"{serialized_query}"
+            serialized_query = " ".join(q.serialize() for q in queries)
         url = f"{self.base_url}/search"
         r = self.__get(
             url=url,
@@ -149,7 +147,7 @@ class Client:
         r = self.__get(url, params=None)
         if r.is_success():
             response_json = r.json()
-            formatted_result = HostResult.from_dict(response_json)
+            formatted_result = cast(HostResult, HostResult.from_dict(response_json))
             response_json = {
                 "services": formatted_result.Services,
                 "leaks": formatted_result.Leaks,
@@ -190,9 +188,7 @@ class Client:
         if queries is None or len(queries) == 0:
             serialized_query = EmptyQuery().serialize()
         else:
-            serialized_query = [q.serialize() for q in queries]
-            serialized_query = " ".join(serialized_query)
-            serialized_query = f"{serialized_query}"
+            serialized_query = " ".join(q.serialize() for q in queries)
         params = {"q": serialized_query}
         r = requests.get(url, params=params, headers=self.headers, stream=True)
         if r.status_code == 200:
@@ -228,9 +224,7 @@ class Client:
         if queries is None or len(queries) == 0:
             serialized_query = EmptyQuery().serialize()
         else:
-            serialized_query = [q.serialize() for q in queries]
-            serialized_query = " ".join(serialized_query)
-            serialized_query = f"{serialized_query}"
+            serialized_query = " ".join(q.serialize() for q in queries)
         params = {"q": serialized_query}
         r = requests.get(url, params=params, headers=self.headers, stream=True)
         if r.status_code == 200:

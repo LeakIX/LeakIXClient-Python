@@ -26,6 +26,8 @@ jobs:
         run: make check-format
       - name: Run linter
         run: make lint
+      - name: Type check
+        run: make typecheck
       - name: Security audit
         run: make audit
 
@@ -49,5 +51,7 @@ jobs:
         run: make check-format
       - name: Run linter
         run: make lint
+      - name: Type check
+        run: make typecheck
       - name: Security audit
         run: make audit
