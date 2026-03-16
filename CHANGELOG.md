@@ -28,6 +28,7 @@ and this project adheres to
   testing triggered by the ci:per-commit label ([3967e42], [#66])
 - Remove duplicated lint-shell target in Makefile ([a652654], [#67])
 - Add mypy type checking to CI workflow ([6b9a3db], [#42])
+- Bump astral-sh/setup-uv from 6 to 7 ([cfa8b6c], [#72])
 - Migrate from Poetry to uv ([14bc55e], [#65])
 
 ## [0.1.10] - 2024-12-XX
@@ -65,6 +66,7 @@ and this project adheres to
 [0.1.9]: https://github.com/LeakIX/LeakIXClient-Python/releases/tag/v0.1.9
 
 <!-- Commit links -->
+[cfa8b6c]: https://github.com/LeakIX/LeakIXClient-Python/commit/cfa8b6c
 [6b9a3db]: https://github.com/LeakIX/LeakIXClient-Python/commit/6b9a3db
 [d111628]: https://github.com/LeakIX/LeakIXClient-Python/commit/d111628
 [df916e5]: https://github.com/LeakIX/LeakIXClient-Python/commit/df916e5
@@ -86,3 +88,4 @@ and this project adheres to
 [#67]: https://github.com/LeakIX/LeakIXClient-Python/issues/67
 [#42]: https://github.com/LeakIX/LeakIXClient-Python/issues/42
 [#68]: https://github.com/LeakIX/LeakIXClient-Python/pull/68
+[#72]: https://github.com/LeakIX/LeakIXClient-Python/pull/72
