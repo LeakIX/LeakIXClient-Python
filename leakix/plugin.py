@@ -1,11 +1,13 @@
+import dataclasses
 from enum import Enum
 
-from serde import Model, fields
+from l9format.l9format import Model
 
 
+@dataclasses.dataclass
 class APIResult(Model):
-    name: fields.Str()
-    description: fields.Str()
+    name: str = ""
+    description: str = ""
 
 
 class Plugin(Enum):

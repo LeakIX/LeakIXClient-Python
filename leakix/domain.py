@@ -1,7 +1,11 @@
-from serde import Model, fields
+import dataclasses
+from datetime import datetime
+
+from l9format.l9format import Model
 
 
+@dataclasses.dataclass
 class L9Subdomain(Model):
-    subdomain: fields.Str()
-    distinct_ips: fields.Int()
-    last_seen: fields.DateTime()
+    subdomain: str = ""
+    distinct_ips: int = 0
+    last_seen: datetime | None = None
