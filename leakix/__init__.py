@@ -1,7 +1,8 @@
 from importlib.metadata import version
 
+from leakix.async_client import AsyncClient as AsyncClient
+from leakix.base import HostResult as HostResult
 from leakix.client import Client as Client
-from leakix.client import HostResult as HostResult
 from leakix.client import Scope as Scope
 from leakix.domain import L9Subdomain as L9Subdomain
 from leakix.field import (
@@ -71,6 +72,7 @@ __version__ = version("leakix")
 
 __all__ = [
     "__version__",
+    "AsyncClient",
     "Client",
     "HostResult",
     "L9Subdomain",

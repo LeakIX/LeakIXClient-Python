@@ -8,10 +8,25 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- AsyncClient with full async/await support using httpx
+- Simple `search()` API accepting raw query strings
+- `get_domain()` method for domain lookups
+- Streaming `bulk_export_stream()` for memory-efficient exports
+- `serialize_queries()` helper to reduce query serialization duplication
+- Async example in `example/example_async_client.py`
+
 ### Changed
 
+- Use `__get` in both sync and async clients for uniform internal API
+- Widen query type from `Query` to `AbstractQuery` to accept `RawQuery` directly
 - Updated l9format requirement from =1.3.2 to =1.4.0 ([ae676d9])
 - Updated l9format requirement from =1.4.0 to =2.0.0 ([df916e5], [#68])
+
+### Fixed
+
+- Return `SuccessResponse` for HTTP 204 No Content instead of `ErrorResponse`
 
 ### Added
 

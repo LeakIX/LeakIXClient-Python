@@ -1,16 +1,14 @@
-import dataclasses
 import json
+from collections.abc import Iterator
 from enum import Enum
-from importlib.metadata import version
 from typing import Any, cast
 
 import requests
 from l9format import l9format
-from l9format.l9format import Model
 
-from leakix.domain import L9Subdomain
-from leakix.plugin import APIResult
-from leakix.query import EmptyQuery, Query
+from leakix.base import BaseClient
+from leakix.base import HostResult as HostResult
+from leakix.query import AbstractQuery, serialize_queries
 from leakix.response import (
     AbstractResponse,
     ErrorResponse,
@@ -24,32 +22,7 @@ class Scope(Enum):
     LEAK = "leak"
 
 
-@dataclasses.dataclass
-class HostResult(Model):
-    Services: list[l9format.L9Event] | None = None
-    Leaks: list[l9format.L9Event] | None = None
-
-
-DEFAULT_URL = "https://leakix.net"
-
-
-class Client:
-    MAX_RESULTS_PER_PAGE = 20
-
-    def __init__(
-        self,
-        api_key: str | None = None,
-        base_url: str | None = DEFAULT_URL,
-    ) -> None:
-        self.api_key = api_key
-        self.base_url = base_url if base_url else DEFAULT_URL
-        self.headers: dict[str, str] = {
-            "Accept": "application/json",
-            "User-agent": f"leakix-client-python/{version('leakix')}",
-        }
-        if api_key:
-            self.headers["api-key"] = api_key
-
+class Client(BaseClient):
     def __get(self, url: str, params: dict[str, Any] | None) -> AbstractResponse:
         r = requests.get(
             url,
@@ -62,14 +35,14 @@ class Client:
         elif r.status_code == 429:
             return RateLimitResponse(response=r)
         elif r.status_code == 204:
-            return ErrorResponse(response=r, response_json=[], status_code=200)
+            return SuccessResponse(response=r, response_json=[])
         else:
             return ErrorResponse(response=r, response_json=r.json())
 
     def get(
         self,
         scope: Scope,
-        queries: list[Query] | None = None,
+        queries: list[AbstractQuery] | None = None,
         page: int = 0,
     ) -> AbstractResponse:
         """
@@ -96,12 +69,9 @@ class Client:
         """
         if page < 0:
             raise ValueError("Page argument must be a positive integer")
-        if queries is None or len(queries) == 0:
-            serialized_query = EmptyQuery().serialize()
-        else:
-            serialized_query = " ".join(q.serialize() for q in queries)
+        serialized_query = serialize_queries(queries)
         url = f"{self.base_url}/search"
-        r = self.__get(
+        return self.__get(
             url=url,
             params={
                 "scope": scope.value,
@@ -109,34 +79,18 @@ class Client:
                 "page": page,
             },
         )
-        return r
 
     def get_service(
-        self, queries: list[Query] | None = None, page: int = 0
+        self, queries: list[AbstractQuery] | None = None, page: int = 0
     ) -> AbstractResponse:
-        """
-        Shortcut for `get` with the scope `Scope.Service`.
-
-        """
-        r = self.get(Scope.SERVICE, queries=queries, page=page)
-        if r.is_success():
-            r.response_json = [
-                l9format.L9Event.from_dict(res) for res in r.response_json
-            ]
-        return r
+        """Shortcut for `get` with the scope `Scope.SERVICE`."""
+        return self._parse_events(self.get(Scope.SERVICE, queries=queries, page=page))
 
     def get_leak(
-        self, queries: list[Query] | None = None, page: int = 0
+        self, queries: list[AbstractQuery] | None = None, page: int = 0
     ) -> AbstractResponse:
-        """
-        Shortcut for `get` with the scope `Scope.Leak`.
-        """
-        r = self.get(Scope.LEAK, queries=queries, page=page)
-        if r.is_success():
-            r.response_json = [
-                l9format.L9Event.from_dict(res) for res in r.response_json
-            ]
-        return r
+        """Shortcut for `get` with the scope `Scope.LEAK`."""
+        return self._parse_events(self.get(Scope.LEAK, queries=queries, page=page))
 
     def get_host(self, ipv4: str) -> AbstractResponse:
         """
@@ -144,16 +98,7 @@ class Client:
         moment.
         """
         url = f"{self.base_url}/host/{ipv4}"
-        r = self.__get(url, params=None)
-        if r.is_success():
-            response_json = r.json()
-            formatted_result = cast(HostResult, HostResult.from_dict(response_json))
-            response_json = {
-                "services": formatted_result.Services,
-                "leaks": formatted_result.Leaks,
-            }
-            r.response_json = response_json
-        return r
+        return self._parse_host_result(self.__get(url, params=None))
 
     def get_plugins(self) -> AbstractResponse:
         """
@@ -166,10 +111,7 @@ class Client:
         For the paid plans, have a look at https://leakix.net/plans.
         """
         url = f"{self.base_url}/api/plugins"
-        r = self.__get(url, params=None)
-        if r.is_success():
-            r.response_json = [APIResult.from_dict(d) for d in r.json()]
-        return r
+        return self._parse_plugins(self.__get(url, params=None))
 
     def get_subdomains(self, domain: str) -> AbstractResponse:
         """
@@ -178,18 +120,13 @@ class Client:
         To get back a JSON/Python dictionary, use the method `to_dict` on the individual element of the response object.
         """
         url = f"{self.base_url}/api/subdomains/{domain}"
-        r = self.__get(url, params=None)
-        if r.is_success():
-            r.response_json = [L9Subdomain.from_dict(d) for d in r.json()]
-        return r
+        return self._parse_subdomains(self.__get(url, params=None))
 
-    def bulk_export(self, queries: list[Query] | None = None) -> AbstractResponse:
+    def bulk_export(
+        self, queries: list[AbstractQuery] | None = None
+    ) -> AbstractResponse:
         url = f"{self.base_url}/bulk/search"
-        if queries is None or len(queries) == 0:
-            serialized_query = EmptyQuery().serialize()
-        else:
-            serialized_query = " ".join(q.serialize() for q in queries)
-        params = {"q": serialized_query}
+        params = {"q": serialize_queries(queries)}
         r = requests.get(url, params=params, headers=self.headers, stream=True)
         if r.status_code == 200:
             response_json = []
@@ -200,12 +137,12 @@ class Client:
         elif r.status_code == 429:
             return RateLimitResponse(response=r)
         elif r.status_code == 204:
-            return ErrorResponse(response=r, response_json=[], status_code=200)
+            return SuccessResponse(response=r, response_json=[])
         else:
             return ErrorResponse(response=r, response_json=r.json())
 
     def bulk_export_last_event(
-        self, queries: list[Query] | None = None
+        self, queries: list[AbstractQuery] | None = None
     ) -> AbstractResponse:
         response = self.bulk_export(queries)
         if response.is_success():
@@ -219,13 +156,11 @@ class Client:
                 aggreg.events = [sorted_events[0]]
         return response
 
-    def bulk_service(self, queries: list[Query] | None = None) -> AbstractResponse:
+    def bulk_service(
+        self, queries: list[AbstractQuery] | None = None
+    ) -> AbstractResponse:
         url = f"{self.base_url}/bulk/service"
-        if queries is None or len(queries) == 0:
-            serialized_query = EmptyQuery().serialize()
-        else:
-            serialized_query = " ".join(q.serialize() for q in queries)
-        params = {"q": serialized_query}
+        params = {"q": serialize_queries(queries)}
         r = requests.get(url, params=params, headers=self.headers, stream=True)
         if r.status_code == 200:
             response_json = []
@@ -236,6 +171,51 @@ class Client:
         elif r.status_code == 429:
             return RateLimitResponse(response=r)
         elif r.status_code == 204:
-            return ErrorResponse(response=r, response_json=[], status_code=200)
+            return SuccessResponse(response=r, response_json=[])
         else:
             return ErrorResponse(response=r, response_json=r.json())
+
+    def get_domain(self, domain: str) -> AbstractResponse:
+        """
+        Returns the list of services and associated leaks for a given domain.
+        """
+        url = f"{self.base_url}/domain/{domain}"
+        return self._parse_host_result(self.__get(url, params=None))
+
+    def search(
+        self, query: str, scope: Scope = Scope.LEAK, page: int = 0
+    ) -> AbstractResponse:
+        """
+        Simple search using a raw query string (same syntax as the website).
+
+        Example:
+            >>> client.search("+plugin:GitConfigHttpPlugin", scope=Scope.LEAK)
+            >>> client.search("+country:FR +port:22", scope=Scope.SERVICE)
+        """
+        if page < 0:
+            raise ValueError("Page argument must be a positive integer")
+        url = f"{self.base_url}/search"
+        r = self.__get(
+            url=url,
+            params={"scope": scope.value, "q": query, "page": page},
+        )
+        return self._parse_events(r)
+
+    def bulk_export_stream(
+        self, queries: list[AbstractQuery] | None = None
+    ) -> Iterator[l9format.L9Aggregation]:
+        """
+        Streaming version of bulk_export. Yields L9Aggregation objects one by one.
+        More memory efficient for large result sets.
+        """
+        url = f"{self.base_url}/bulk/search"
+        params = {"q": serialize_queries(queries)}
+        r = requests.get(url, params=params, headers=self.headers, stream=True)
+        if r.status_code != 200:
+            return
+        for line in r.iter_lines():
+            json_event = json.loads(line)
+            yield cast(
+                l9format.L9Aggregation,
+                l9format.L9Aggregation.from_dict(json_event),
+            )

@@ -1,11 +1,15 @@
 [project]
 name = "leakix"
-version = "0.1.10"
+version = "0.2.0"
 description = "Official python client for LeakIX (https://leakix.net)"
-authors = [{ name = "Danny Willems", email = "danny@leakix.net" }]
+authors = [
+    { name = "Danny Willems", email = "danny@leakix.net" },
+    { name = "Valentin Lobstein", email = "valentin@leakix.net" },
+]
 requires-python = ">=3.11"
 dependencies = [
     "requests",
+    "httpx>=0.28.0",
     "l9format==2.0.0",
     "fire>=0.5,<0.8",
 ]
