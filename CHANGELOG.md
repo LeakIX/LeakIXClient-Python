@@ -52,6 +52,7 @@ and this project adheres to
 - Add mypy type checking to CI workflow ([6b9a3db], [#42])
 - Bump astral-sh/setup-uv from 6 to 7 ([cfa8b6c], [#72])
 - Migrate from Poetry to uv ([14bc55e], [#65])
+- Makefile: add `publish` and `publish-dry-run` targets ([87b68f6], [#80])
 
 ## [0.1.10] - 2024-12-XX
 
@@ -88,6 +89,7 @@ and this project adheres to
 [0.1.9]: https://github.com/LeakIX/LeakIXClient-Python/releases/tag/v0.1.9
 
 <!-- Commit links -->
+[87b68f6]: https://github.com/LeakIX/LeakIXClient-Python/commit/87b68f6
 [c62d2a4]: https://github.com/LeakIX/LeakIXClient-Python/commit/c62d2a4
 [01b280f]: https://github.com/LeakIX/LeakIXClient-Python/commit/01b280f
 [aa9cc03]: https://github.com/LeakIX/LeakIXClient-Python/commit/aa9cc03
@@ -119,3 +121,4 @@ and this project adheres to
 [#75]: https://github.com/LeakIX/LeakIXClient-Python/pull/75
 [#76]: https://github.com/LeakIX/LeakIXClient-Python/pull/76
 [#78]: https://github.com/LeakIX/LeakIXClient-Python/pull/78
+[#80]: https://github.com/LeakIX/LeakIXClient-Python/pull/80
