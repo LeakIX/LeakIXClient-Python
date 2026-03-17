@@ -52,6 +52,12 @@ ignore_missing_imports = false
 testpaths = ["tests"]
 addopts = "-v"
 
+[tool.hatch.build.targets.sdist]
+include = ["leakix/", "LICENSE", "README.md", "pyproject.toml"]
+
+[tool.hatch.build.targets.wheel]
+include = ["leakix/"]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
