@@ -6,7 +6,6 @@ import decouple
 
 from leakix import AsyncClient, Scope
 
-
 API_KEY = decouple.config("API_KEY")
 
 
