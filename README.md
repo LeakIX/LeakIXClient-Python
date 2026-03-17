@@ -1,7 +1,9 @@
 # LeakIX python client
 
-[![](https://img.shields.io/pypi/v/leakix.svg)](https://pypi.org/project/leakix/)
-[![](https://img.shields.io/pypi/pyversions/leakix.svg)](https://pypi.org/project/leakix/)
+[![PyPI version](https://img.shields.io/pypi/v/leakix)](https://pypi.org/project/leakix/)
+[![Python versions](https://img.shields.io/pypi/pyversions/leakix)](https://pypi.org/project/leakix/)
+
+Supported Python versions: 3.11, 3.12, 3.13, 3.14
 
 Official LeakIX python client
 
