@@ -10,7 +10,7 @@ requires-python = ">=3.11"
 dependencies = [
     "requests",
     "httpx>=0.28.0",
-    "l9format==2.0.0",
+    "l9format==2.0.1",
     "fire>=0.5,<0.8",
 ]
 
