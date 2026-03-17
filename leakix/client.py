@@ -34,7 +34,7 @@ class Client(BaseClient):
         elif r.status_code == 429:
             return RateLimitResponse(response=r)
         elif r.status_code == 204:
-            return ErrorResponse(response=r, response_json=[], status_code=200)
+            return SuccessResponse(response=r, response_json=[])
         else:
             return ErrorResponse(response=r, response_json=r.json())
 
@@ -136,7 +136,7 @@ class Client(BaseClient):
         elif r.status_code == 429:
             return RateLimitResponse(response=r)
         elif r.status_code == 204:
-            return ErrorResponse(response=r, response_json=[], status_code=200)
+            return SuccessResponse(response=r, response_json=[])
         else:
             return ErrorResponse(response=r, response_json=r.json())
 
@@ -170,6 +170,6 @@ class Client(BaseClient):
         elif r.status_code == 429:
             return RateLimitResponse(response=r)
         elif r.status_code == 204:
-            return ErrorResponse(response=r, response_json=[], status_code=200)
+            return SuccessResponse(response=r, response_json=[])
         else:
             return ErrorResponse(response=r, response_json=r.json())
