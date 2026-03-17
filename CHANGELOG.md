@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Changed
+
+- README: update PyPI badges and add supported Python versions
+  ([d9e4bf8], [#84])
+
 ### Infrastructure
 
 - CI: add PR hygiene checks using dannywillems/toolbox ([591c046], [#81])
@@ -95,6 +100,7 @@ and this project adheres to
 [0.1.9]: https://github.com/LeakIX/LeakIXClient-Python/releases/tag/v0.1.9
 
 <!-- Commit links -->
+[d9e4bf8]: https://github.com/LeakIX/LeakIXClient-Python/commit/d9e4bf8
 [87b68f6]: https://github.com/LeakIX/LeakIXClient-Python/commit/87b68f6
 [591c046]: https://github.com/LeakIX/LeakIXClient-Python/commit/591c046
 [c62d2a4]: https://github.com/LeakIX/LeakIXClient-Python/commit/c62d2a4
@@ -118,6 +124,7 @@ and this project adheres to
 [4dd4948]: https://github.com/LeakIX/LeakIXClient-Python/commit/4dd4948
 
 <!-- PR links -->
+[#84]: https://github.com/LeakIX/LeakIXClient-Python/issues/84
 [#66]: https://github.com/LeakIX/LeakIXClient-Python/pull/66
 [#65]: https://github.com/LeakIX/LeakIXClient-Python/issues/65
 [#67]: https://github.com/LeakIX/LeakIXClient-Python/issues/67
