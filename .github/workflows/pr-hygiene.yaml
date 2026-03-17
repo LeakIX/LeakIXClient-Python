@@ -1,0 +1,54 @@
+name: PR hygiene checks
+on:
+  pull_request:
+    types: [assigned, opened, synchronize, reopened]
+    branches:
+      - main
+  merge_group:
+    types: [checks_requested]
+
+jobs:
+  check-pr-size:
+    name: Check PR size
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Download script
+        run: |
+          curl -sSLO \
+            "https://raw.githubusercontent.com/dannywillems/toolbox/main/pr-hygiene/check-pr-size.sh"
+          chmod +x check-pr-size.sh
+      - name: Check PR size
+        run: >
+          ./check-pr-size.sh
+          "${{ github.event.pull_request.base.sha }}"
+
+  check-commit-messages:
+    name: Check commit messages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Download scripts
+        run: |
+          for script in check-title-length.sh \
+            check-no-fixup.sh check-commit-body.sh; do
+            curl -sSLO \
+              "https://raw.githubusercontent.com/dannywillems/toolbox/main/pr-hygiene/${script}"
+            chmod +x "${script}"
+          done
+      - name: Check title length
+        run: >
+          ./check-title-length.sh
+          "${{ github.event.pull_request.base.sha }}"
+      - name: Check no fixup/WIP commits
+        run: >
+          ./check-no-fixup.sh
+          "${{ github.event.pull_request.base.sha }}"
+      - name: Check commit body on large changes
+        run: >
+          ./check-commit-body.sh
+          "${{ github.event.pull_request.base.sha }}"

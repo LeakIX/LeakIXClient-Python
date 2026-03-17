@@ -8,6 +8,10 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Infrastructure
+
+- CI: add PR hygiene checks using dannywillems/toolbox ([591c046], [#81])
+
 ### Added
 
 - AsyncClient with full async/await support using httpx
@@ -90,6 +94,7 @@ and this project adheres to
 
 <!-- Commit links -->
 [87b68f6]: https://github.com/LeakIX/LeakIXClient-Python/commit/87b68f6
+[591c046]: https://github.com/LeakIX/LeakIXClient-Python/commit/591c046
 [c62d2a4]: https://github.com/LeakIX/LeakIXClient-Python/commit/c62d2a4
 [01b280f]: https://github.com/LeakIX/LeakIXClient-Python/commit/01b280f
 [aa9cc03]: https://github.com/LeakIX/LeakIXClient-Python/commit/aa9cc03
@@ -122,3 +127,4 @@ and this project adheres to
 [#76]: https://github.com/LeakIX/LeakIXClient-Python/pull/76
 [#78]: https://github.com/LeakIX/LeakIXClient-Python/pull/78
 [#80]: https://github.com/LeakIX/LeakIXClient-Python/pull/80
+[#81]: https://github.com/LeakIX/LeakIXClient-Python/issues/81
