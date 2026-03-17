@@ -2,11 +2,37 @@
 name = "leakix"
 version = "0.2.0"
 description = "Official python client for LeakIX (https://leakix.net)"
+readme = "README.md"
+license = { text = "MIT" }
 authors = [
     { name = "Danny Willems", email = "danny@leakix.net" },
     { name = "Valentin Lobstein", email = "valentin@leakix.net" },
 ]
 requires-python = ">=3.11"
+keywords = [
+    "leakix",
+    "security",
+    "osint",
+    "reconnaissance",
+    "vulnerability",
+    "attack-surface",
+    "exposure",
+    "threat-intelligence",
+    "api-client",
+    "cybersecurity",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Security",
+    "Typing :: Typed",
+]
 dependencies = [
     "requests",
     "httpx>=0.28.0",
@@ -51,6 +77,12 @@ ignore_missing_imports = false
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v"
+
+[project.urls]
+Homepage = "https://leakix.net"
+Repository = "https://github.com/LeakIX/LeakIXClient-Python"
+Issues = "https://github.com/LeakIX/LeakIXClient-Python/issues"
+Changelog = "https://github.com/LeakIX/LeakIXClient-Python/blob/main/CHANGELOG.md"
 
 [tool.hatch.build.targets.sdist]
 include = ["leakix/", "LICENSE", "README.md", "pyproject.toml"]
