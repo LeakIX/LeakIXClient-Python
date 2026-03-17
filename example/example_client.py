@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 import decouple
 
-from leakix import Client
+from leakix import Client, Scope
 from leakix.field import CountryField, Operator, PluginField, TimeField
 from leakix.plugin import Plugin
 from leakix.query import MustNotQuery, MustQuery, RawQuery
@@ -118,6 +118,36 @@ def example_get_subdomains():
     print(response.json())
 
 
+def example_search_simple():
+    """Simple search using query string syntax (same as the website)."""
+    response = CLIENT.search("+plugin:GitConfigHttpPlugin", scope=Scope.LEAK)
+    for event in response.json():
+        print(event.ip)
+
+
+def example_search_service():
+    """Search for services with multiple filters."""
+    response = CLIENT.search("+country:FR +port:22", scope=Scope.SERVICE)
+    for event in response.json():
+        print(event.ip, event.port)
+
+
+def example_get_domain():
+    """Get services and leaks for a domain."""
+    response = CLIENT.get_domain("example.com")
+    if response.is_success():
+        print("Services:", response.json()["services"])
+        print("Leaks:", response.json()["leaks"])
+
+
+def example_bulk_export_stream():
+    """Streaming bulk export - memory efficient for large datasets."""
+    query = MustQuery(field=PluginField(Plugin.GitConfigHttpPlugin))
+    for aggregation in CLIENT.bulk_export_stream(queries=[query]):
+        for event in aggregation.events:
+            print(event.ip)
+
+
 if __name__ == "__main__":
     example_get_host_filter_plugin()
     example_get_service_filter_plugin()
@@ -131,3 +161,7 @@ if __name__ == "__main__":
     example_bulk_service()
     example_bulk_export_last_event()
     example_get_subdomains()
+    example_search_simple()
+    example_search_service()
+    example_get_domain()
+    example_bulk_export_stream()
