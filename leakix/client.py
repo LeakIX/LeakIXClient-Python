@@ -7,7 +7,7 @@ from l9format import l9format
 
 from leakix.base import BaseClient
 from leakix.base import HostResult as HostResult
-from leakix.query import EmptyQuery, Query
+from leakix.query import AbstractQuery, serialize_queries
 from leakix.response import (
     AbstractResponse,
     ErrorResponse,
@@ -41,7 +41,7 @@ class Client(BaseClient):
     def get(
         self,
         scope: Scope,
-        queries: list[Query] | None = None,
+        queries: list[AbstractQuery] | None = None,
         page: int = 0,
     ) -> AbstractResponse:
         """
@@ -68,10 +68,7 @@ class Client(BaseClient):
         """
         if page < 0:
             raise ValueError("Page argument must be a positive integer")
-        if queries is None or len(queries) == 0:
-            serialized_query = EmptyQuery().serialize()
-        else:
-            serialized_query = " ".join(q.serialize() for q in queries)
+        serialized_query = serialize_queries(queries)
         url = f"{self.base_url}/search"
         return self.__get(
             url=url,
@@ -83,13 +80,13 @@ class Client(BaseClient):
         )
 
     def get_service(
-        self, queries: list[Query] | None = None, page: int = 0
+        self, queries: list[AbstractQuery] | None = None, page: int = 0
     ) -> AbstractResponse:
         """Shortcut for `get` with the scope `Scope.SERVICE`."""
         return self._parse_events(self.get(Scope.SERVICE, queries=queries, page=page))
 
     def get_leak(
-        self, queries: list[Query] | None = None, page: int = 0
+        self, queries: list[AbstractQuery] | None = None, page: int = 0
     ) -> AbstractResponse:
         """Shortcut for `get` with the scope `Scope.LEAK`."""
         return self._parse_events(self.get(Scope.LEAK, queries=queries, page=page))
@@ -124,13 +121,11 @@ class Client(BaseClient):
         url = f"{self.base_url}/api/subdomains/{domain}"
         return self._parse_subdomains(self.__get(url, params=None))
 
-    def bulk_export(self, queries: list[Query] | None = None) -> AbstractResponse:
+    def bulk_export(
+        self, queries: list[AbstractQuery] | None = None
+    ) -> AbstractResponse:
         url = f"{self.base_url}/bulk/search"
-        if queries is None or len(queries) == 0:
-            serialized_query = EmptyQuery().serialize()
-        else:
-            serialized_query = " ".join(q.serialize() for q in queries)
-        params = {"q": serialized_query}
+        params = {"q": serialize_queries(queries)}
         r = requests.get(url, params=params, headers=self.headers, stream=True)
         if r.status_code == 200:
             response_json = []
@@ -146,7 +141,7 @@ class Client(BaseClient):
             return ErrorResponse(response=r, response_json=r.json())
 
     def bulk_export_last_event(
-        self, queries: list[Query] | None = None
+        self, queries: list[AbstractQuery] | None = None
     ) -> AbstractResponse:
         response = self.bulk_export(queries)
         if response.is_success():
@@ -160,13 +155,11 @@ class Client(BaseClient):
                 aggreg.events = [sorted_events[0]]
         return response
 
-    def bulk_service(self, queries: list[Query] | None = None) -> AbstractResponse:
+    def bulk_service(
+        self, queries: list[AbstractQuery] | None = None
+    ) -> AbstractResponse:
         url = f"{self.base_url}/bulk/service"
-        if queries is None or len(queries) == 0:
-            serialized_query = EmptyQuery().serialize()
-        else:
-            serialized_query = " ".join(q.serialize() for q in queries)
-        params = {"q": serialized_query}
+        params = {"q": serialize_queries(queries)}
         r = requests.get(url, params=params, headers=self.headers, stream=True)
         if r.status_code == 200:
             response_json = []

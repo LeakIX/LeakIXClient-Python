@@ -75,3 +75,10 @@ class RawQuery(AbstractQuery):
 
     def serialize(self) -> str:
         return self.raw_q
+
+
+def serialize_queries(queries: list[AbstractQuery] | None) -> str:
+    """Serialize a list of queries into a query string for the API."""
+    if queries is None or len(queries) == 0:
+        return EmptyQuery().serialize()
+    return " ".join(q.serialize() for q in queries)
