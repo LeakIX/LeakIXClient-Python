@@ -12,6 +12,8 @@ and this project adheres to
 
 - CI: add PR hygiene checks using dannywillems/toolbox ([591c046], [#81])
 
+## [1.0.0] - 2026-03-17
+
 ### Added
 
 - AsyncClient with full async/await support using httpx
@@ -20,16 +22,18 @@ and this project adheres to
 - Streaming `bulk_export_stream()` for memory-efficient exports
 - `serialize_queries()` helper to reduce query serialization duplication
 - Async example in `example/example_async_client.py`
+- Add Python 3.11, 3.12, and 3.14 support ([d111628])
 
 ### Changed
 
 - Use `__get` in both sync and async clients for uniform internal API
-- Widen query type from `Query` to `AbstractQuery` to accept `RawQuery` directly
+- Widen query type from `Query` to `AbstractQuery` to accept `RawQuery`
+  directly
 - Updated l9format requirement from =1.3.2 to =1.4.0 ([ae676d9])
 - Updated l9format requirement from =1.4.0 to =2.0.0 ([df916e5], [#68])
 - Updated l9format requirement from =2.0.0 to =2.0.1 ([5764b2f], [#74])
-- Use explicit include lists instead of exclude lists for hatch build targets
-  (sdist and wheel) in `pyproject.toml` ([aa9cc03], [#75])
+- Use explicit include lists instead of exclude lists for hatch build
+  targets (sdist and wheel) in `pyproject.toml` ([aa9cc03], [#75])
 - README: replace inline examples with links to `example/` directory
   ([01b280f], [#76])
 - Add PyPI metadata: license, readme, classifiers, urls, keywords
@@ -37,11 +41,8 @@ and this project adheres to
 
 ### Fixed
 
-- Return `SuccessResponse` for HTTP 204 No Content instead of `ErrorResponse`
-
-### Added
-
-- Add Python 3.11, 3.12, and 3.14 support ([d111628])
+- Return `SuccessResponse` for HTTP 204 No Content instead of
+  `ErrorResponse`
 
 ### Removed
 
@@ -88,7 +89,8 @@ and this project adheres to
 - Query building with MustQuery, MustNotQuery, ShouldQuery
 - Field filters: TimeField, PluginField, IPField, PortField, CountryField
 
-[unreleased]: https://github.com/LeakIX/LeakIXClient-Python/compare/v0.1.10...HEAD
+[unreleased]: https://github.com/LeakIX/LeakIXClient-Python/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/LeakIX/LeakIXClient-Python/compare/v0.1.10...v1.0.0
 [0.1.10]: https://github.com/LeakIX/LeakIXClient-Python/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/LeakIX/LeakIXClient-Python/releases/tag/v0.1.9
 
