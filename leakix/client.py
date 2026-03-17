@@ -1,6 +1,7 @@
 import json
+from collections.abc import Iterator
 from enum import Enum
-from typing import Any
+from typing import Any, cast
 
 import requests
 from l9format import l9format
@@ -173,3 +174,48 @@ class Client(BaseClient):
             return SuccessResponse(response=r, response_json=[])
         else:
             return ErrorResponse(response=r, response_json=r.json())
+
+    def get_domain(self, domain: str) -> AbstractResponse:
+        """
+        Returns the list of services and associated leaks for a given domain.
+        """
+        url = f"{self.base_url}/domain/{domain}"
+        return self._parse_host_result(self.__get(url, params=None))
+
+    def search(
+        self, query: str, scope: Scope = Scope.LEAK, page: int = 0
+    ) -> AbstractResponse:
+        """
+        Simple search using a raw query string (same syntax as the website).
+
+        Example:
+            >>> client.search("+plugin:GitConfigHttpPlugin", scope=Scope.LEAK)
+            >>> client.search("+country:FR +port:22", scope=Scope.SERVICE)
+        """
+        if page < 0:
+            raise ValueError("Page argument must be a positive integer")
+        url = f"{self.base_url}/search"
+        r = self.__get(
+            url=url,
+            params={"scope": scope.value, "q": query, "page": page},
+        )
+        return self._parse_events(r)
+
+    def bulk_export_stream(
+        self, queries: list[AbstractQuery] | None = None
+    ) -> Iterator[l9format.L9Aggregation]:
+        """
+        Streaming version of bulk_export. Yields L9Aggregation objects one by one.
+        More memory efficient for large result sets.
+        """
+        url = f"{self.base_url}/bulk/search"
+        params = {"q": serialize_queries(queries)}
+        r = requests.get(url, params=params, headers=self.headers, stream=True)
+        if r.status_code != 200:
+            return
+        for line in r.iter_lines():
+            json_event = json.loads(line)
+            yield cast(
+                l9format.L9Aggregation,
+                l9format.L9Aggregation.from_dict(json_event),
+            )
