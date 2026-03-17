@@ -26,6 +26,8 @@ and this project adheres to
 - Updated l9format requirement from =2.0.0 to =2.0.1 ([5764b2f], [#74])
 - Use explicit include lists instead of exclude lists for hatch build targets
   (sdist and wheel) in `pyproject.toml` ([aa9cc03], [#75])
+- README: replace inline examples with links to `example/` directory
+  ([01b280f], [#76])
 
 ### Fixed
 
@@ -84,6 +86,7 @@ and this project adheres to
 [0.1.9]: https://github.com/LeakIX/LeakIXClient-Python/releases/tag/v0.1.9
 
 <!-- Commit links -->
+[01b280f]: https://github.com/LeakIX/LeakIXClient-Python/commit/01b280f
 [aa9cc03]: https://github.com/LeakIX/LeakIXClient-Python/commit/aa9cc03
 [5764b2f]: https://github.com/LeakIX/LeakIXClient-Python/commit/5764b2f
 [cfa8b6c]: https://github.com/LeakIX/LeakIXClient-Python/commit/cfa8b6c
@@ -111,3 +114,4 @@ and this project adheres to
 [#72]: https://github.com/LeakIX/LeakIXClient-Python/pull/72
 [#74]: https://github.com/LeakIX/LeakIXClient-Python/pull/74
 [#75]: https://github.com/LeakIX/LeakIXClient-Python/pull/75
+[#76]: https://github.com/LeakIX/LeakIXClient-Python/pull/76
