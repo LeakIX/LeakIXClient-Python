@@ -1,15 +1,12 @@
-import dataclasses
 import json
 from enum import Enum
-from importlib.metadata import version
-from typing import Any, cast
+from typing import Any
 
 import requests
 from l9format import l9format
-from l9format.l9format import Model
 
-from leakix.domain import L9Subdomain
-from leakix.plugin import APIResult
+from leakix.base import BaseClient
+from leakix.base import HostResult as HostResult
 from leakix.query import EmptyQuery, Query
 from leakix.response import (
     AbstractResponse,
@@ -24,32 +21,7 @@ class Scope(Enum):
     LEAK = "leak"
 
 
-@dataclasses.dataclass
-class HostResult(Model):
-    Services: list[l9format.L9Event] | None = None
-    Leaks: list[l9format.L9Event] | None = None
-
-
-DEFAULT_URL = "https://leakix.net"
-
-
-class Client:
-    MAX_RESULTS_PER_PAGE = 20
-
-    def __init__(
-        self,
-        api_key: str | None = None,
-        base_url: str | None = DEFAULT_URL,
-    ) -> None:
-        self.api_key = api_key
-        self.base_url = base_url if base_url else DEFAULT_URL
-        self.headers: dict[str, str] = {
-            "Accept": "application/json",
-            "User-agent": f"leakix-client-python/{version('leakix')}",
-        }
-        if api_key:
-            self.headers["api-key"] = api_key
-
+class Client(BaseClient):
     def __get(self, url: str, params: dict[str, Any] | None) -> AbstractResponse:
         r = requests.get(
             url,
@@ -101,7 +73,7 @@ class Client:
         else:
             serialized_query = " ".join(q.serialize() for q in queries)
         url = f"{self.base_url}/search"
-        r = self.__get(
+        return self.__get(
             url=url,
             params={
                 "scope": scope.value,
@@ -109,34 +81,18 @@ class Client:
                 "page": page,
             },
         )
-        return r
 
     def get_service(
         self, queries: list[Query] | None = None, page: int = 0
     ) -> AbstractResponse:
-        """
-        Shortcut for `get` with the scope `Scope.Service`.
-
-        """
-        r = self.get(Scope.SERVICE, queries=queries, page=page)
-        if r.is_success():
-            r.response_json = [
-                l9format.L9Event.from_dict(res) for res in r.response_json
-            ]
-        return r
+        """Shortcut for `get` with the scope `Scope.SERVICE`."""
+        return self._parse_events(self.get(Scope.SERVICE, queries=queries, page=page))
 
     def get_leak(
         self, queries: list[Query] | None = None, page: int = 0
     ) -> AbstractResponse:
-        """
-        Shortcut for `get` with the scope `Scope.Leak`.
-        """
-        r = self.get(Scope.LEAK, queries=queries, page=page)
-        if r.is_success():
-            r.response_json = [
-                l9format.L9Event.from_dict(res) for res in r.response_json
-            ]
-        return r
+        """Shortcut for `get` with the scope `Scope.LEAK`."""
+        return self._parse_events(self.get(Scope.LEAK, queries=queries, page=page))
 
     def get_host(self, ipv4: str) -> AbstractResponse:
         """
@@ -144,16 +100,7 @@ class Client:
         moment.
         """
         url = f"{self.base_url}/host/{ipv4}"
-        r = self.__get(url, params=None)
-        if r.is_success():
-            response_json = r.json()
-            formatted_result = cast(HostResult, HostResult.from_dict(response_json))
-            response_json = {
-                "services": formatted_result.Services,
-                "leaks": formatted_result.Leaks,
-            }
-            r.response_json = response_json
-        return r
+        return self._parse_host_result(self.__get(url, params=None))
 
     def get_plugins(self) -> AbstractResponse:
         """
@@ -166,10 +113,7 @@ class Client:
         For the paid plans, have a look at https://leakix.net/plans.
         """
         url = f"{self.base_url}/api/plugins"
-        r = self.__get(url, params=None)
-        if r.is_success():
-            r.response_json = [APIResult.from_dict(d) for d in r.json()]
-        return r
+        return self._parse_plugins(self.__get(url, params=None))
 
     def get_subdomains(self, domain: str) -> AbstractResponse:
         """
@@ -178,10 +122,7 @@ class Client:
         To get back a JSON/Python dictionary, use the method `to_dict` on the individual element of the response object.
         """
         url = f"{self.base_url}/api/subdomains/{domain}"
-        r = self.__get(url, params=None)
-        if r.is_success():
-            r.response_json = [L9Subdomain.from_dict(d) for d in r.json()]
-        return r
+        return self._parse_subdomains(self.__get(url, params=None))
 
     def bulk_export(self, queries: list[Query] | None = None) -> AbstractResponse:
         url = f"{self.base_url}/bulk/search"
