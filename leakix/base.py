@@ -67,6 +67,12 @@ class BaseClient:
         return response
 
     @staticmethod
+    def _parse_plugin(response: AbstractResponse) -> AbstractResponse:
+        if response.is_success():
+            response.response_json = APIResult.from_dict(response.json())
+        return response
+
+    @staticmethod
     def _parse_subdomains(response: AbstractResponse) -> AbstractResponse:
         if response.is_success():
             response.response_json = [L9Subdomain.from_dict(d) for d in response.json()]

@@ -113,6 +113,15 @@ class Client(BaseClient):
         url = f"{self.base_url}/api/plugins"
         return self._parse_plugins(self.__get(url, params=None))
 
+    def get_plugin(self, name: str) -> AbstractResponse:
+        """
+        Returns the description of a plugin by its name.
+
+        The output is an `APIResult` object with `name` and `description` fields.
+        """
+        url = f"{self.base_url}/api/plugins/{name}"
+        return self._parse_plugin(self.__get(url, params=None))
+
     def get_subdomains(self, domain: str) -> AbstractResponse:
         """
         Returns the list of subdomains for a given domain.
