@@ -135,6 +135,10 @@ class AsyncClient(BaseClient):
         """Returns the list of plugins the authenticated user has access to."""
         return self._parse_plugins(await self.__get("/api/plugins"))
 
+    async def get_plugin(self, name: str) -> AbstractResponse:
+        """Returns the description of a plugin by its name."""
+        return self._parse_plugin(await self.__get(f"/api/plugins/{name}"))
+
     async def get_subdomains(self, domain: str) -> AbstractResponse:
         """Returns the list of subdomains for a given domain."""
         return self._parse_subdomains(await self.__get(f"/api/subdomains/{domain}"))

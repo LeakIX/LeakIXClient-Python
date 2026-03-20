@@ -220,6 +220,48 @@ class TestGetPlugins:
             assert response.status_code() == 401
 
 
+class TestGetPlugin:
+    def test_get_plugin_success(self, client_with_api_key):
+        res_json = {
+            "name": "GrafanaOpenPlugin",
+            "description": "Grafana open instances",
+        }
+        with requests_mock.Mocker() as m:
+            m.get(
+                f"{client_with_api_key.base_url}/api/plugins/GrafanaOpenPlugin",
+                json=res_json,
+                status_code=200,
+            )
+            response = client_with_api_key.get_plugin("GrafanaOpenPlugin")
+            assert response.is_success()
+            assert response.json().name == "GrafanaOpenPlugin"
+            assert response.json().description == "Grafana open instances"
+
+    def test_get_plugin_not_found(self, client):
+        res_json = {"title": "Not Found", "description": "Plugin not found"}
+        with requests_mock.Mocker() as m:
+            m.get(
+                f"{client.base_url}/api/plugins/NonExistent",
+                json=res_json,
+                status_code=404,
+            )
+            response = client.get_plugin("NonExistent")
+            assert response.is_error()
+            assert response.status_code() == 404
+
+    def test_get_plugin_unauthorized(self, client):
+        res_json = {"error": "unauthorized"}
+        with requests_mock.Mocker() as m:
+            m.get(
+                f"{client.base_url}/api/plugins/GrafanaOpenPlugin",
+                json=res_json,
+                status_code=401,
+            )
+            response = client.get_plugin("GrafanaOpenPlugin")
+            assert response.is_error()
+            assert response.status_code() == 401
+
+
 class TestGetSubdomains:
     def test_get_subdomains_success(self, client):
         res_json = [
