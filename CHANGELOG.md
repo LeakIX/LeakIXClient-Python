@@ -8,6 +8,8 @@ and this project adheres to
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-03-20
+
 ### Added
 
 - Add `get_plugin(name)` method to fetch plugin description by name
@@ -99,7 +101,8 @@ and this project adheres to
 - Query building with MustQuery, MustNotQuery, ShouldQuery
 - Field filters: TimeField, PluginField, IPField, PortField, CountryField
 
-[unreleased]: https://github.com/LeakIX/LeakIXClient-Python/compare/v1.0.0...HEAD
+[unreleased]: https://github.com/LeakIX/LeakIXClient-Python/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/LeakIX/LeakIXClient-Python/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/LeakIX/LeakIXClient-Python/compare/v0.1.10...v1.0.0
 [0.1.10]: https://github.com/LeakIX/LeakIXClient-Python/compare/v0.1.9...v0.1.10
 [0.1.9]: https://github.com/LeakIX/LeakIXClient-Python/releases/tag/v0.1.9
