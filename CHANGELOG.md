@@ -8,6 +8,11 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Added
+
+- Add `get_plugin(name)` method to fetch plugin description by name
+  ([dbb4d57], [#85])
+
 ### Changed
 
 - README: update PyPI badges and add supported Python versions
@@ -100,6 +105,7 @@ and this project adheres to
 [0.1.9]: https://github.com/LeakIX/LeakIXClient-Python/releases/tag/v0.1.9
 
 <!-- Commit links -->
+[dbb4d57]: https://github.com/LeakIX/LeakIXClient-Python/commit/dbb4d57
 [d9e4bf8]: https://github.com/LeakIX/LeakIXClient-Python/commit/d9e4bf8
 [87b68f6]: https://github.com/LeakIX/LeakIXClient-Python/commit/87b68f6
 [591c046]: https://github.com/LeakIX/LeakIXClient-Python/commit/591c046
@@ -124,6 +130,7 @@ and this project adheres to
 [4dd4948]: https://github.com/LeakIX/LeakIXClient-Python/commit/4dd4948
 
 <!-- PR links -->
+[#85]: https://github.com/LeakIX/LeakIXClient-Python/issues/85
 [#84]: https://github.com/LeakIX/LeakIXClient-Python/issues/84
 [#66]: https://github.com/LeakIX/LeakIXClient-Python/pull/66
 [#65]: https://github.com/LeakIX/LeakIXClient-Python/issues/65
