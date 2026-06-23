@@ -15,7 +15,7 @@ jobs:
     outputs:
       has_label: ${{ steps.check.outputs.has_label }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Check for label
         id: check
         env:
@@ -34,7 +34,7 @@ jobs:
     if: needs.check-label.outputs.has_label == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Install uv
