@@ -45,7 +45,7 @@ dev = [
     "python-decouple>=3.8",
     "pytest>=9.1.1",
     "pytest-cov>=7.1.0",
-    "hypothesis>=6.161.6",
+    "hypothesis>=6.161.6,!=6.161.7",  # 6.161.7 ships no cp313 wheels
     "mypy>=2.3.0",
     "types-requests>=2.33.0.20260712",
     "requests-mock>=1.12.1",
