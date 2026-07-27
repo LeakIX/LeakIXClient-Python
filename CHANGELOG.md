@@ -8,6 +8,14 @@ and this project adheres to
 
 ## [Unreleased]
 
+### Infrastructure
+
+- CI/tooling: adopt the common CI and tooling setup: coverage gate,
+  pip-audit, TruffleHog secret scanning, zizmor workflow SAST with hardened
+  workflows, CycloneDX SBOM, nox, and a mkdocs docs site; expand ruff and
+  enable mypy strict on the library; bump all dependencies to their latest
+  versions ([fde4aa5])
+
 ## [1.1.0] - 2026-03-20
 
 ### Added
@@ -108,6 +116,7 @@ and this project adheres to
 [0.1.9]: https://github.com/LeakIX/LeakIXClient-Python/releases/tag/v0.1.9
 
 <!-- Commit links -->
+[fde4aa5]: https://github.com/LeakIX/LeakIXClient-Python/commit/fde4aa5
 [dbb4d57]: https://github.com/LeakIX/LeakIXClient-Python/commit/dbb4d57
 [d9e4bf8]: https://github.com/LeakIX/LeakIXClient-Python/commit/d9e4bf8
 [87b68f6]: https://github.com/LeakIX/LeakIXClient-Python/commit/87b68f6
