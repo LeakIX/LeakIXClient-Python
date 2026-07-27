@@ -34,22 +34,28 @@ classifiers = [
     "Typing :: Typed",
 ]
 dependencies = [
-    "requests",
-    "httpx>=0.28.0",
+    "requests>=2.34.2",
+    "httpx>=0.28.1",
     "l9format==2.0.1",
-    "fire>=0.5,<0.8",
+    "fire>=0.7.1,<0.8",
 ]
 
 [dependency-groups]
 dev = [
-    "python-decouple",
-    "pytest",
-    "pytest-cov",
-    "mypy",
-    "types-requests",
-    "requests-mock",
-    "ruff",
-    "pip-audit",
+    "python-decouple>=3.8",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "hypothesis>=6.161.6",
+    "mypy>=2.3.0",
+    "types-requests>=2.33.0.20260712",
+    "requests-mock>=1.12.1",
+    "ruff>=0.16.0",
+    "pip-audit>=2.10.1",
+    "cyclonedx-bom>=7.3.1",
+    "nox>=2026.7.11",
+    "zizmor>=1.28.0",
+    "mkdocs-material>=9.7.7",
+    "mkdocstrings[python]>=1.0.6",
 ]
 
 [tool.ruff]
@@ -57,26 +63,57 @@ line-length = 88
 target-version = "py311"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B", "SIM"]
+select = [
+    "E", "F", "I", "N", "W", "UP", "B", "C4", "SIM",
+    "S",     # flake8-bandit (SAST)
+    "ASYNC", # flake8-async
+    "PT",    # flake8-pytest-style
+    "PTH",   # flake8-use-pathlib
+    "PIE", "RET", "ARG", "ERA", "RUF",
+    "PLC", "PLE", "PLW",
+]
 ignore = ["E501"]
 
 [tool.ruff.lint.per-file-ignores]
-# Allow percent formatting in example/executable (existing code style)
-"example/*.py" = ["UP031"]
-"executable/*.py" = ["UP031"]
+# pytest asserts are the standard idiom; S101 flags assert (stripped under
+# -O), which does not apply to test code.
+"tests/**" = ["S101"]
 
 [tool.ruff.format]
 quote-style = "double"
 
 [tool.mypy]
 python_version = "3.11"
+strict = true
 warn_return_any = true
 warn_unused_configs = true
+warn_unused_ignores = true
 ignore_missing_imports = false
+
+# The library is fully strict; test functions are exempt from requiring
+# annotations (the standard pytest convention).
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v"
+
+[tool.coverage.run]
+source = ["leakix"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+exclude_also = [
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "@(abc\\.)?abstractmethod",
+]
 
 [project.urls]
 Homepage = "https://leakix.net"
