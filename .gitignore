@@ -128,4 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-uv.lock
+# Tooling caches and generated artifacts
+.ruff_cache/
+sbom.cdx.json
+sbom-requirements.txt

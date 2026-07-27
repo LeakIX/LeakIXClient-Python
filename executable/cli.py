@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from pathlib import Path
 
 import fire
 from decouple import config
@@ -41,12 +42,12 @@ class CLI:
             res = []
             for j in response.json():
                 res.append(j.to_dict())
-            with open(filename, "w") as f:
+            with Path(filename).open("w") as f:
                 f.write(json.dumps(res))
         else:
-            raise Exception(
-                "API error (code = %d, message = %s)"
-                % (response.status_code(), response.json())
+            raise RuntimeError(
+                f"API error (code = {response.status_code()}, "
+                f"message = {response.json()})"
             )
 
 

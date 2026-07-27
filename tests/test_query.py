@@ -161,11 +161,11 @@ class TestPortField:
         assert field.serialize() == "port:65535"
 
     def test_invalid_port_negative(self) -> None:
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="between 0 and 65535"):
             PortField(-1)
 
     def test_invalid_port_too_large(self) -> None:
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="between 0 and 65535"):
             PortField(65536)
 
     def test_serialize_with_greater_operator(self) -> None:

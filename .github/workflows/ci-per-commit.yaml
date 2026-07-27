@@ -1,4 +1,5 @@
 name: CI per commit
+
 on:
   push:
     branches:
@@ -8,24 +9,35 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   check-label:
-    name: Check for ci:per-commit label
+    name: Check ci:per-commit label
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
     outputs:
       has_label: ${{ steps.check.outputs.has_label }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Check for label
         id: check
         env:
           GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          REPOSITORY: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
         run: |
           .github/scripts/check-ci-per-commit-label.sh \
-            "${{ github.event_name }}" \
-            "${{ github.repository }}" \
-            "${{ github.sha }}" \
-            '${{ toJSON(github.event.pull_request.labels.*.name) }}' \
+            "$EVENT_NAME" \
+            "$REPOSITORY" \
+            "$SHA" \
+            "$LABELS" \
             >> "$GITHUB_OUTPUT"
 
   ci-per-commit:
@@ -34,32 +46,40 @@ jobs:
     if: needs.check-label.outputs.has_label == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
+
       - name: Install uv
-        uses: astral-sh/setup-uv@v7
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: "3.13"
-      - name: Install GNU sed (macOS)
-        if: runner.os == 'macOS'
-        run: brew install gnu-sed
+
       - name: Determine commit range
         id: range
         env:
-          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          PUSH_SHA: ${{ github.sha }}
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            BASE="${{ github.event.pull_request.base.sha }}"
-            HEAD="${{ github.event.pull_request.head.sha }}"
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            BASE="$PR_BASE_SHA"
+            HEAD="$PR_HEAD_SHA"
           else
-            BASE="${{ github.event.before }}"
-            HEAD="${{ github.sha }}"
+            BASE="$PUSH_BEFORE"
+            HEAD="$PUSH_SHA"
           fi
           echo "base=${BASE}" >> "$GITHUB_OUTPUT"
           echo "head=${HEAD}" >> "$GITHUB_OUTPUT"
+
       - name: Run CI on each commit
-        run: |
-          .github/scripts/run-ci-per-commit.sh \
-            "${{ steps.range.outputs.base }}" \
-            "${{ steps.range.outputs.head }}"
+        env:
+          BASE: ${{ steps.range.outputs.base }}
+          HEAD: ${{ steps.range.outputs.head }}
+        run: .github/scripts/run-ci-per-commit.sh "$BASE" "$HEAD"

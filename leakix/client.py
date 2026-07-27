@@ -6,8 +6,7 @@ from typing import Any, cast
 import requests
 from l9format import l9format
 
-from leakix.base import BaseClient
-from leakix.base import HostResult as HostResult
+from leakix.base import BaseClient, HostResult
 from leakix.query import AbstractQuery, serialize_queries
 from leakix.response import (
     AbstractResponse,
@@ -15,6 +14,11 @@ from leakix.response import (
     RateLimitResponse,
     SuccessResponse,
 )
+
+__all__ = ["Client", "HostResult", "Scope"]
+
+# Default timeout (seconds) for outbound HTTP requests.
+_DEFAULT_TIMEOUT = 30
 
 
 class Scope(Enum):
@@ -28,16 +32,16 @@ class Client(BaseClient):
             url,
             params=params,
             headers=self.headers,
+            timeout=_DEFAULT_TIMEOUT,
         )
         if r.status_code == 200:
             response_json = r.json() if r.content else []
             return SuccessResponse(response=r, response_json=response_json)
-        elif r.status_code == 429:
+        if r.status_code == 429:
             return RateLimitResponse(response=r)
-        elif r.status_code == 204:
+        if r.status_code == 204:
             return SuccessResponse(response=r, response_json=[])
-        else:
-            return ErrorResponse(response=r, response_json=r.json())
+        return ErrorResponse(response=r, response_json=r.json())
 
     def get(
         self,
@@ -136,19 +140,24 @@ class Client(BaseClient):
     ) -> AbstractResponse:
         url = f"{self.base_url}/bulk/search"
         params = {"q": serialize_queries(queries)}
-        r = requests.get(url, params=params, headers=self.headers, stream=True)
+        r = requests.get(
+            url,
+            params=params,
+            headers=self.headers,
+            stream=True,
+            timeout=_DEFAULT_TIMEOUT,
+        )
         if r.status_code == 200:
             response_json = []
             for line in r.iter_lines():
                 json_event = json.loads(line)
                 response_json.append(l9format.L9Aggregation.from_dict(json_event))
             return SuccessResponse(response=r, response_json=response_json)
-        elif r.status_code == 429:
+        if r.status_code == 429:
             return RateLimitResponse(response=r)
-        elif r.status_code == 204:
+        if r.status_code == 204:
             return SuccessResponse(response=r, response_json=[])
-        else:
-            return ErrorResponse(response=r, response_json=r.json())
+        return ErrorResponse(response=r, response_json=r.json())
 
     def bulk_export_last_event(
         self, queries: list[AbstractQuery] | None = None
@@ -170,19 +179,24 @@ class Client(BaseClient):
     ) -> AbstractResponse:
         url = f"{self.base_url}/bulk/service"
         params = {"q": serialize_queries(queries)}
-        r = requests.get(url, params=params, headers=self.headers, stream=True)
+        r = requests.get(
+            url,
+            params=params,
+            headers=self.headers,
+            stream=True,
+            timeout=_DEFAULT_TIMEOUT,
+        )
         if r.status_code == 200:
             response_json = []
             for line in r.iter_lines():
                 json_event = json.loads(line)
                 response_json.append(l9format.L9Event.from_dict(json_event))
             return SuccessResponse(response=r, response_json=response_json)
-        elif r.status_code == 429:
+        if r.status_code == 429:
             return RateLimitResponse(response=r)
-        elif r.status_code == 204:
+        if r.status_code == 204:
             return SuccessResponse(response=r, response_json=[])
-        else:
-            return ErrorResponse(response=r, response_json=r.json())
+        return ErrorResponse(response=r, response_json=r.json())
 
     def get_domain(self, domain: str) -> AbstractResponse:
         """
@@ -219,7 +233,13 @@ class Client(BaseClient):
         """
         url = f"{self.base_url}/bulk/search"
         params = {"q": serialize_queries(queries)}
-        r = requests.get(url, params=params, headers=self.headers, stream=True)
+        r = requests.get(
+            url,
+            params=params,
+            headers=self.headers,
+            stream=True,
+            timeout=_DEFAULT_TIMEOUT,
+        )
         if r.status_code != 200:
             return
         for line in r.iter_lines():

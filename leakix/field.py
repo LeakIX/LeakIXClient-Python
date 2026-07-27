@@ -36,7 +36,6 @@ class TimeField(CustomField):
 
 class UpdateDateField(CustomField):
     def __init__(self, d: datetime, operator: Operator | None = None) -> None:
-        # v = '"%s"' % d.strftime("%Y-%m-%d %H:%M:%S")
         v = '"{}"'.format(d.strftime("%Y-%m-%d"))
         super().__init__(v=v, operator=operator, field_name="update_date")
 

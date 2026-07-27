@@ -68,12 +68,11 @@ class AsyncClient(BaseClient):
         if r.status_code == 200:
             response_json = r.json() if r.content else []
             return SuccessResponse(response=r, response_json=response_json)
-        elif r.status_code == 429:
+        if r.status_code == 429:
             return RateLimitResponse(response=r)
-        elif r.status_code == 204:
+        if r.status_code == 204:
             return SuccessResponse(response=r, response_json=[])
-        else:
-            return ErrorResponse(response=r, response_json=r.json())
+        return ErrorResponse(response=r, response_json=r.json())
 
     async def get(
         self,
@@ -161,13 +160,12 @@ class AsyncClient(BaseClient):
                             l9format.L9Aggregation.from_dict(json_event)
                         )
                 return SuccessResponse(response=r, response_json=response_json)
-            elif r.status_code == 429:
+            if r.status_code == 429:
                 return RateLimitResponse(response=r)
-            elif r.status_code == 204:
+            if r.status_code == 204:
                 return SuccessResponse(response=r, response_json=[])
-            else:
-                await r.aread()
-                return ErrorResponse(response=r, response_json=r.json())
+            await r.aread()
+            return ErrorResponse(response=r, response_json=r.json())
 
     async def bulk_export_stream(
         self, queries: list[AbstractQuery] | None = None

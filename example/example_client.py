@@ -11,9 +11,15 @@ API_KEY = decouple.config("API_KEY")
 CLIENT = Client(api_key=API_KEY)
 
 
+def _require(condition: bool, message: str = "example check failed") -> None:
+    """Raise if an example invariant does not hold (assert replacement)."""
+    if not condition:
+        raise RuntimeError(message)
+
+
 def example_get_host_filter_plugin():
     response = CLIENT.get_host(ipv4="33.33.33.33")
-    assert response.status_code() == 200
+    _require(response.status_code() == 200)
 
 
 def example_get_service_filter_plugin():
@@ -23,9 +29,9 @@ def example_get_service_filter_plugin():
     """
     query_http_ntlm = MustQuery(field=PluginField(Plugin.HttpNTLM))
     response = CLIENT.get_service(queries=[query_http_ntlm])
-    assert response.status_code() == 200, response.status_code()
+    _require(response.status_code() == 200, str(response.status_code()))
     # check we only get NTML related services
-    assert all(i.tags == ["ntlm"] for i in response.json())
+    _require(all(i.tags == ["ntlm"] for i in response.json()))
 
 
 def example_get_service_filter_plugin_with_pagination():
@@ -36,18 +42,21 @@ def example_get_service_filter_plugin_with_pagination():
     """
     query_http_ntlm = MustQuery(field=PluginField(Plugin.HttpNTLM))
     response = CLIENT.get_service(queries=[query_http_ntlm], page=1)
-    assert response.status_code() == 200
+    _require(response.status_code() == 200)
     # check we only get NTML related services
-    assert all(i.tags == ["ntlm"] for i in response.json())
+    _require(all(i.tags == ["ntlm"] for i in response.json()))
 
 
 def example_get_leaks_filter_multiple_plugins():
     query_http_ntlm = MustQuery(field=PluginField(Plugin.HttpNTLM))
     query_country = MustQuery(field=CountryField("France"))
     response = CLIENT.get_leak(queries=[query_http_ntlm, query_country])
-    assert response.status_code() == 200, response.status_code()
-    assert all(
-        i.geoip.country_name == "France" and i.tags == ["ntlm"] for i in response.json()
+    _require(response.status_code() == 200, str(response.status_code()))
+    _require(
+        all(
+            i.geoip.country_name == "France" and i.tags == ["ntlm"]
+            for i in response.json()
+        )
     )
 
 
@@ -55,9 +64,12 @@ def example_get_leaks_multiple_filter_plugins_must_not():
     query_http_ntlm = MustQuery(field=PluginField(Plugin.HttpNTLM))
     query_country = MustNotQuery(field=CountryField("France"))
     response = CLIENT.get_leak(queries=[query_http_ntlm, query_country])
-    assert response.status_code() == 200, response.status_code()
-    assert all(
-        i.geoip.country_name != "France" and i.tags == ["ntlm"] for i in response.json()
+    _require(response.status_code() == 200, str(response.status_code()))
+    _require(
+        all(
+            i.geoip.country_name != "France" and i.tags == ["ntlm"]
+            for i in response.json()
+        )
     )
 
 
@@ -65,9 +77,12 @@ def example_get_leak_raw_query():
     raw_query = '+plugin:HttpNTLM +country:"France"'
     query = RawQuery(raw_query)
     response = CLIENT.get_leak(queries=[query])
-    assert response.status_code() == 200, response.status_code()
-    assert all(
-        i.geoip.country_name == "France" and i.tags == ["ntlm"] for i in response.json()
+    _require(response.status_code() == 200, str(response.status_code()))
+    _require(
+        all(
+            i.geoip.country_name == "France" and i.tags == ["ntlm"]
+            for i in response.json()
+        )
     )
 
 
@@ -81,7 +96,7 @@ def example_get_leak_plugins_with_time():
     )
     queries = [query_today, query_yesterday, query_plugin]
     response = CLIENT.get_leak(queries=queries)
-    assert response.status_code() == 200
+    _require(response.status_code() == 200)
 
 
 def example_get_plugins():
