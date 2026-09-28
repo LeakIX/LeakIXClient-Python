@@ -21,7 +21,7 @@ class TestSuccessResponse:
     def test_json_returns_response_json(self) -> None:
         mock_response = Mock()
         mock_response.status_code = 200
-        expected_json = {"services": [], "leaks": []}
+        expected_json: dict[str, object] = {"services": [], "leaks": []}
         mock_response.json.return_value = expected_json
 
         response = SuccessResponse(mock_response)

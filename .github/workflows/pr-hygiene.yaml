@@ -7,31 +7,38 @@ on:
   merge_group:
     types: [checks_requested]
 
+permissions:
+  contents: read
+
 jobs:
   check-pr-size:
     name: Check PR size
     runs-on: ubuntu-latest
+    # Advisory only: report the size but never block the PR.
+    continue-on-error: true
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Download script
         run: |
           curl -sSLO \
             "https://raw.githubusercontent.com/dannywillems/toolbox/main/pr-hygiene/check-pr-size.sh"
           chmod +x check-pr-size.sh
       - name: Check PR size
-        run: >
-          ./check-pr-size.sh
-          "${{ github.event.pull_request.base.sha }}"
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: ./check-pr-size.sh "$BASE_SHA"
 
   check-commit-messages:
     name: Check commit messages
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Download scripts
         run: |
           for script in check-title-length.sh \
@@ -41,14 +48,14 @@ jobs:
             chmod +x "${script}"
           done
       - name: Check title length
-        run: >
-          ./check-title-length.sh
-          "${{ github.event.pull_request.base.sha }}"
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: ./check-title-length.sh "$BASE_SHA"
       - name: Check no fixup/WIP commits
-        run: >
-          ./check-no-fixup.sh
-          "${{ github.event.pull_request.base.sha }}"
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: ./check-no-fixup.sh "$BASE_SHA"
       - name: Check commit body on large changes
-        run: >
-          ./check-commit-body.sh
-          "${{ github.event.pull_request.base.sha }}"
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: ./check-commit-body.sh "$BASE_SHA"

@@ -9,11 +9,17 @@ from leakix import AsyncClient, Scope
 API_KEY = decouple.config("API_KEY")
 
 
+def _require(condition: bool, message: str = "example check failed") -> None:
+    """Raise if an example invariant does not hold (assert replacement)."""
+    if not condition:
+        raise RuntimeError(message)
+
+
 async def example_search_services():
     """Search for services using a raw query string."""
     async with AsyncClient(api_key=API_KEY) as client:
         response = await client.search("+country:FR +port:22", scope=Scope.SERVICE)
-        assert response.status_code() == 200
+        _require(response.status_code() == 200)
         for event in response.json():
             print(f"{event.ip}:{event.port} - {event.summary}")
 
@@ -22,7 +28,7 @@ async def example_search_leaks():
     """Search for leaks using a raw query string."""
     async with AsyncClient(api_key=API_KEY) as client:
         response = await client.search("+plugin:GitConfigHttpPlugin", scope=Scope.LEAK)
-        assert response.status_code() == 200
+        _require(response.status_code() == 200)
         for event in response.json():
             print(f"{event.host} - {event.summary}")
 

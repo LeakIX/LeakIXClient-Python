@@ -22,17 +22,17 @@ HOSTS_404_RESULTS_DIR = HOSTS_RESULTS_DIR / "404"
 
 
 @pytest.fixture
-def client() -> None:
+def client() -> Client:
     return Client()
 
 
 @pytest.fixture
-def client_with_api_key() -> None:
+def client_with_api_key() -> Client:
     return Client(api_key="test-api-key")
 
 
 @pytest.fixture
-def fake_ipv4() -> None:
+def fake_ipv4() -> str:
     return "33.33.33.33"
 
 
@@ -69,7 +69,7 @@ class TestGetHost:
         ids=lambda f: f.stem,
     )
     def test_get_host_success(self, client, fixture_file):
-        with open(fixture_file) as ff:
+        with fixture_file.open() as ff:
             res_json = json.load(ff)
         ipv4 = fixture_file.stem
         with requests_mock.Mocker() as m:
@@ -86,7 +86,7 @@ class TestGetHost:
         ids=lambda f: f.stem,
     )
     def test_get_host_404(self, client, fixture_file):
-        with open(fixture_file) as ff:
+        with fixture_file.open() as ff:
             res_json = json.load(ff)
         ipv4 = fixture_file.stem
         with requests_mock.Mocker() as m:

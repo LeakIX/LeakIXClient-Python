@@ -156,7 +156,7 @@ class TestClientEdgeCases:
 
     def test_get_negative_page(self):
         client = Client()
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="positive integer"):
             client.get(Scope.SERVICE, page=-1)
 
 
