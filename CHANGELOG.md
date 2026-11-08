@@ -15,6 +15,23 @@ and this project adheres to
   workflows, CycloneDX SBOM, nox, and a mkdocs docs site; expand ruff and
   enable mypy strict on the library; bump all dependencies to their latest
   versions ([fde4aa5])
+- CI: bump actions/setup-python 7.0.0 -> 7.1.0 ([d51343b], [#116])
+- CI: bump actions/upload-artifact 4.6.2 -> 7.0.2 ([7d6e2f6], [#111])
+- CI: bump astral-sh/setup-uv 7.6.0 -> 10.3.2 ([ff128ce], [#118])
+- CI: bump trufflesecurity/trufflehog 3.96.0 -> 3.99.7 ([e904e24], [#119])
+- CI: bump zizmorcore/zizmor-action 0.6.1 -> 0.8.0 ([414e6f6], [#117])
+- Deps (dev): bump cyclonedx-bom 7.3.1 -> 7.6.0 ([0a94743], [#128])
+- Deps (dev): bump hypothesis 6.161.6 -> 6.170.14 ([79fb133], [#125])
+- Deps (dev): bump mkdocs-material 9.7.7 -> 9.8.0 ([c2477a7], [#121])
+- Deps (dev): bump mypy 2.3.0 -> 2.4.1 ([3a86087], [#129])
+- Deps (dev): bump nox 2026.7.11 -> 2026.10.20 ([c5ca040], [#122])
+- Deps (dev): bump pytest 9.1.1 -> 9.2.0 ([1522206], [#127])
+- Deps (dev): bump ruff 0.16.0 -> 0.17.3 ([b2f9444], [#124])
+- Deps (dev): bump types-requests 2.33.0.20260712 -> 2.33.0.20261030
+  ([e6f7ba6], [#126])
+- Deps (dev): bump zizmor 1.28.0 -> 1.31.1 ([5f279b6], [#115])
+- Deps: bump vulnerable transitive dependencies flagged by pip-audit
+  (certifi, filelock, msgpack, pip, urllib3, virtualenv) ([42e0bc0], [#130])
 
 ## [1.1.0] - 2026-03-20
 
@@ -117,6 +134,21 @@ and this project adheres to
 
 <!-- Commit links -->
 [fde4aa5]: https://github.com/LeakIX/LeakIXClient-Python/commit/fde4aa5
+[d51343b]: https://github.com/LeakIX/LeakIXClient-Python/commit/d51343b
+[7d6e2f6]: https://github.com/LeakIX/LeakIXClient-Python/commit/7d6e2f6
+[ff128ce]: https://github.com/LeakIX/LeakIXClient-Python/commit/ff128ce
+[e904e24]: https://github.com/LeakIX/LeakIXClient-Python/commit/e904e24
+[414e6f6]: https://github.com/LeakIX/LeakIXClient-Python/commit/414e6f6
+[0a94743]: https://github.com/LeakIX/LeakIXClient-Python/commit/0a94743
+[79fb133]: https://github.com/LeakIX/LeakIXClient-Python/commit/79fb133
+[c2477a7]: https://github.com/LeakIX/LeakIXClient-Python/commit/c2477a7
+[3a86087]: https://github.com/LeakIX/LeakIXClient-Python/commit/3a86087
+[c5ca040]: https://github.com/LeakIX/LeakIXClient-Python/commit/c5ca040
+[1522206]: https://github.com/LeakIX/LeakIXClient-Python/commit/1522206
+[b2f9444]: https://github.com/LeakIX/LeakIXClient-Python/commit/b2f9444
+[e6f7ba6]: https://github.com/LeakIX/LeakIXClient-Python/commit/e6f7ba6
+[5f279b6]: https://github.com/LeakIX/LeakIXClient-Python/commit/5f279b6
+[42e0bc0]: https://github.com/LeakIX/LeakIXClient-Python/commit/42e0bc0
 [dbb4d57]: https://github.com/LeakIX/LeakIXClient-Python/commit/dbb4d57
 [d9e4bf8]: https://github.com/LeakIX/LeakIXClient-Python/commit/d9e4bf8
 [87b68f6]: https://github.com/LeakIX/LeakIXClient-Python/commit/87b68f6
@@ -142,6 +174,21 @@ and this project adheres to
 [4dd4948]: https://github.com/LeakIX/LeakIXClient-Python/commit/4dd4948
 
 <!-- PR links -->
+[#130]: https://github.com/LeakIX/LeakIXClient-Python/pull/130
+[#116]: https://github.com/LeakIX/LeakIXClient-Python/pull/116
+[#111]: https://github.com/LeakIX/LeakIXClient-Python/pull/111
+[#118]: https://github.com/LeakIX/LeakIXClient-Python/pull/118
+[#119]: https://github.com/LeakIX/LeakIXClient-Python/pull/119
+[#117]: https://github.com/LeakIX/LeakIXClient-Python/pull/117
+[#128]: https://github.com/LeakIX/LeakIXClient-Python/pull/128
+[#125]: https://github.com/LeakIX/LeakIXClient-Python/pull/125
+[#121]: https://github.com/LeakIX/LeakIXClient-Python/pull/121
+[#129]: https://github.com/LeakIX/LeakIXClient-Python/pull/129
+[#122]: https://github.com/LeakIX/LeakIXClient-Python/pull/122
+[#127]: https://github.com/LeakIX/LeakIXClient-Python/pull/127
+[#124]: https://github.com/LeakIX/LeakIXClient-Python/pull/124
+[#126]: https://github.com/LeakIX/LeakIXClient-Python/pull/126
+[#115]: https://github.com/LeakIX/LeakIXClient-Python/pull/115
 [#85]: https://github.com/LeakIX/LeakIXClient-Python/issues/85
 [#84]: https://github.com/LeakIX/LeakIXClient-Python/issues/84
 [#66]: https://github.com/LeakIX/LeakIXClient-Python/pull/66
